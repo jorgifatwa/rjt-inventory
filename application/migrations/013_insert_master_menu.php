@@ -26,7 +26,7 @@ class Migration_insert_master_menu extends CI_Migration {
             array('id'=>8,'module_id'=>1, 'name'=>'Barang', 'url'=>'barang', 'parent_id'=>7, 'icon'=>"fa fa-circle-o", 'sequence'	=>1), 
             array('id'=>9,'module_id'=>1, 'name'=>'Stock', 'url'=>'stock', 'parent_id'=>7, 'icon'=>"fa fa-circle-o", 'sequence'	=>2), 
             array('id'=>10,'module_id'=>1, 'name'=>'Transaksi', 'url'=>'#', 'parent_id'=>1, 'icon'=>"fa fa-exchange-alt", 'sequence'=>2),
-            array('id'=>11,'module_id'=>1, 'name'=>'Data Transaksi', 'url'=>'barang_masuk', 'parent_id'=>10, 'icon'=>"fa fa-circle-o", 'sequence'=>1), 
+            array('id'=>11,'module_id'=>1, 'name'=>'Data Transaksi', 'url'=>'transaksi', 'parent_id'=>10, 'icon'=>"fa fa-circle-o", 'sequence'=>1), 
             array('id'=>12,'module_id'=>1, 'name'=>'Barang Masuk', 'url'=>'barang_masuk', 'parent_id'=>10, 'icon'=>"fa fa-circle-o", 'sequence'=>2), 
             array('id'=>13,'module_id'=>1, 'name'=>'Barang Keluar', 'url'=>'barang_keluar', 'parent_id'=>10, 'icon'=>"fa fa-circle-o", 'sequence'=>3), 
             array('id'=>14,'module_id'=>1, 'name'=>'Gudang', 'url'=>'gudang', 'parent_id'=>7, 'icon'=>"fa fa-circle-o", 'sequence'	=>3), 
