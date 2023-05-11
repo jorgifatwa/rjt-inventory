@@ -72,9 +72,8 @@ class Transaksi extends Admin_Controller
 	public function dataList() 
 	{
 		$columns = array(
-			0 => 'no_faktur',
+			0 => 'no_resi',
 			1 => 'tanggal',
-			2 => '',
 		);
 
 		$order = $columns[$this->input->post('order')[0]['column']];
@@ -112,7 +111,7 @@ class Transaksi extends Admin_Controller
 				}
 
 				$nestedData['id'] = $start + $key + 1;
-				$nestedData['no_faktur'] = $data->no_faktur;
+				$nestedData['no_resi'] = $data->no_resi;
 				$nestedData['tanggal'] = $data->created_at;
 				$nestedData['action'] = $edit_url;
 				$new_data[] = $nestedData;

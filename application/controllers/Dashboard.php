@@ -105,8 +105,8 @@ class Dashboard extends Admin_Controller {
 			"pendapatan" => $data_pendapatan,
 		];
 
-		if (!empty($datas)) {
-			$return_data['data'] = $datas;
+		if (!empty($data_grafik)) {
+			// $return_data['data'] = $datas;
 			$return_data['grafik'] = $data_grafik;
 			$return_data['status'] = true;
 			$return_data['message'] = "Berhasil mengambil data!";

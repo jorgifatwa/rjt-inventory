@@ -24,6 +24,7 @@ class Barang_masuk extends Admin_Controller
 			$this->data['content'] = 'errors/html/restrict';
 		}
 
+		$this->data['gudangs'] = $this->gudang_model->getAllById();
 		$this->load->view('admin/layouts/page', $this->data);
 	}
 
@@ -35,12 +36,25 @@ class Barang_masuk extends Admin_Controller
 			for ($i=0; $i < count($this->input->post('jumlah')); $i++) { 
 				$koli = $this->koli_model->getOneBy(array('koli.id' => $_POST['id_koli'][$i]));
 				
+				if(!isset($_POST['status_ukuran'])){
+					$_POST['status_ukuran'][$i] = 'false';
+				}else if(!isset($_POST['status_ukuran'][$i])){
+					$_POST['status_ukuran'][$i] = 'false';
+				}
+
 				if($_POST['status_ukuran'][$i] == 'true'){
 					$total = ($_POST['jumlah'][$i] * $koli->jumlah) / 2;
 				}else{
 					$total = $_POST['jumlah'][$i] * $koli->jumlah;
 				}
 
+				
+				if($this->data['users_groups']->id == 2){
+					$_POST['id_gudang'] = 1;
+				}else if($this->data['users_groups']->id == 3){
+					$_POST['id_gudang'] = 2;
+				}
+				
 				$data = array(
 					'id_barang' => $_POST['id_barang'][$i],
 					'id_koli' => $_POST['id_koli'][$i],
@@ -50,17 +64,10 @@ class Barang_masuk extends Admin_Controller
 					'jumlah_koli' => $_POST['jumlah'][$i],
 					'jumlah_barang' => $total,
 					'tanggal' => $_POST['tanggal'],
+					'id_gudang' => $_POST['id_gudang'],
 					'created_at' => date('Y-m-d H:i:s'),
 					'created_by' => $this->data['users']->id
 				);
-
-				if($this->data['users_groups']->id == 2){
-					$data['id_gudang'] = 1;
-				}else if($this->data['users_groups']->id == 3){
-					$data['id_gudang'] = 2;
-				}else{
-					$data['id_gudang'] = $_POST['id_gudang'][$i];
-				}
 
 				$insert = $this->barang_masuk_model->insert($data);
 
@@ -128,13 +135,26 @@ class Barang_masuk extends Admin_Controller
 					//UPDATE STOCK DI GUDANG
 					$stock = $this->stock_gudang_model->getOneBy(array('id_barang' => $_POST['id_barang'][$i], 'id_warna' => $_POST['id_warna'][$i], 'ukuran' => $_POST['ukuran'][$i], 'id_gudang' => $data['id_gudang']));
 
-					$total = $stock->stock + ($_POST['jumlah'][$i] * $koli->jumlah);
-	
-					$data_update = array(
-						'stock' => $total
-					);
+					
+					if($stock){
+						$total = $stock->stock + ($_POST['jumlah'][$i] * $koli->jumlah);
+		
+						$data_update = array(
+							'stock' => $total
+						);
+						$this->stock_gudang_model->update($data_update, array("id" => $stock->id));
+					}else{
+						$data_insert = array(
+							'id_barang' => $_POST['id_barang'][$i],
+							'id_warna' => $_POST['id_warna'][$i],
+							'ukuran' => $_POST['ukuran'][$i],
+							'id_gudang' => $_POST['id_gudang'],
+							'stock' => $_POST['jumlah'][$i] * $koli->jumlah
+						);
 
-					$this->stock_gudang_model->update($data_update, array("id" => $stock->id));
+						$this->stock_gudang_model->insert($data_insert);
+					}
+
 				}
 			}
 
@@ -231,13 +251,19 @@ class Barang_masuk extends Admin_Controller
 		$limit = 0;
 		$start = 0;
 		$where = array();
-		if($this->data['users_groups']->id == 2){
+		if($this->data['users_groups']->id != 1){
+			if($this->data['users_groups']->id == 2){
+				$where = array(
+					'id_gudang' => 1
+				);
+			}else if($this->data['users_groups']->id == 3){
+				$where = array(
+					'id_gudang' => 2
+				);
+			}
+		}else{
 			$where = array(
-				'id_gudang' => 1
-			);
-		}else if($this->data['users_groups']->id == 3){
-			$where = array(
-				'id_gudang' => 2
+				'id_gudang' => $this->input->post('id_gudang')
 			);
 		}
 
@@ -273,10 +299,6 @@ class Barang_masuk extends Admin_Controller
 				$edit_url = "";
 				$delete_url = "";
 
-				if ($this->data['is_can_edit'] && $data->is_deleted == 0 && $data->tanggal == date('Y-m-d')) {
-					$edit_url = "<a href='" . base_url() . "barang_masuk/edit/" . $data->id . "' class='btn btn-sm btn-info white'> Ubah</a>";
-				}
-
 				if ($this->data['is_can_delete'] && $data->tanggal == date('Y-m-d')) {
 					$delete_url = "<a href='#'
 						url='" . base_url() . "barang_masuk/destroy/" . $data->id . "/" . $data->is_deleted . "'
@@ -290,6 +312,9 @@ class Barang_masuk extends Admin_Controller
 				if($this->data['users_groups']->id == 2){
 					$nestedData['koli_name'] = $data->koli_name;
 					$nestedData['jumlah_koli'] = $data->jumlah_koli;
+				}else if($this->data['users_groups']->id == 1 && $this->input->post('id_gudang') == 1){
+					$nestedData['koli_name'] = $data->koli_name;
+					$nestedData['jumlah_koli'] = $data->jumlah_koli;
 				}
 				$nestedData['ukuran'] = $data->ukuran;
 				if($data->status_ukuran == 'true'){
@@ -300,8 +325,9 @@ class Barang_masuk extends Admin_Controller
 				$nestedData['jumlah_barang'] = $data->jumlah_barang;
 				$nestedData['warna_name'] = $data->warna_name;
 				$nestedData['tanggal'] = $data->tanggal;
-				$nestedData['action'] = $edit_url . " " . $delete_url;
+				$nestedData['action'] = $delete_url;
 				$new_data[] = $nestedData;
+
 			}
 		}
 
@@ -330,13 +356,19 @@ class Barang_masuk extends Admin_Controller
 		$limit = 0;
 		$start = 0;
 		$where = array();
-		if($this->data['users_groups']->id == 2){
+		if($this->data['users_groups']->id != 1){
+			if($this->data['users_groups']->id == 2){
+				$where = array(
+					'id_gudang' => 1
+				);
+			}else if($this->data['users_groups']->id == 3){
+				$where = array(
+					'id_gudang' => 2
+				);
+			}
+		}else{
 			$where = array(
-				'id_gudang' => 1
-			);
-		}else if($this->data['users_groups']->id == 3){
-			$where = array(
-				'id_gudang' => 2
+				'id_gudang' => $this->input->post('id_gudang')
 			);
 		}
 		$totalData = $this->stock_gudang_model->getCountAllBy($limit, $start, $search, $order, $dir, $where);
@@ -459,15 +491,28 @@ class Barang_masuk extends Admin_Controller
 		$is_deleted = $this->uri->segment(4);
 		if (!empty($id)) {
 			$barang_masuk = $this->barang_masuk_model->getOneBy(array('barang_masuk.id' => $id));
-			$barang = $this->barang_model->getOneBy(array('barang.id' => $barang_masuk->id_barang));
+			
+			//STOCK KESELURUHAN
+			$barang = $this->stock_model->getOneBy(array('id_barang' => $barang_masuk->id_barang, 'ukuran' => $barang_masuk->ukuran, 'id_warna' => $barang_masuk->id_warna));
+					
+			$total = $barang->stock - $barang_masuk->jumlah_barang;
 
-			$total = $barang->stock - $barang_masuk->jumlah; 
-
-			$data_barang = array(
+			$data_update = array(
 				'stock' => $total
 			);
 
-			$update = $this->barang_model->update($data_barang, array("barang.id" => $barang_masuk->id_barang));
+			$this->stock_model->update($data_update, array("id" => $barang->id));
+			
+			//UPDATE STOCK DI GUDANG
+			$barang = $this->stock_gudang_model->getOneBy(array('id_barang' => $barang_masuk->id_barang, 'ukuran' => $barang_masuk->ukuran, 'id_warna' => $barang_masuk->id_warna, 'id_gudang' => $barang_masuk->id_gudang));
+
+			$total = $barang->stock - $barang_masuk->jumlah_barang;
+
+			$data_update = array(
+				'stock' => $total
+			);
+
+			$this->stock_gudang_model->update($data_update, array("id" => $barang->id));;
 			
 			$data = array(
 				'is_deleted' => ($is_deleted == 1) ? 0 : 1,

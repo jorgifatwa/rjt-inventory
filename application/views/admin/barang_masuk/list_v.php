@@ -17,75 +17,138 @@
 <input type="hidden" id="role" value="<?php echo $this->data['users_groups']->id ?>">
 <section class="content">
   <div class="container-fluid">
-  	<div class="card mb-3">
-		<div class="card-header">
-			<div class="row">
-				<div class="col-sm-6">
-					<h3>Data Stok Barang</h3>
+	<div class="row <?php if($this->data['users_groups']->id != 1){ echo "d-none"; } ?>">
+		<div class="card col-12 mb-3">
+		  <div class="card-body">
+			  <h4>Pilih Gudang Yang Akan Di lihat</h4>
+			  <select name="id_gudang" id="id_gudang_lihat" class="form-control">
+				  <option value="">Pilih Gudang</option>
+				  <?php foreach ($gudangs as $gudang) { ?>
+					  <option value="<?php echo $gudang->id ?>"><?php echo $gudang->nama ?></option>
+				  <?php } ?>
+			  </select>
+		  </div>
+	  </div>
+	</div>
+	<div class="row data-stok-barang <?php if($this->data['users_groups']->id == 1){ echo "d-none"; } ?>">
+		<div class="card col-12 mb-3">
+			<div class="card-header">
+				<div class="row">
+					<div class="col-sm-6">
+						<h3>Data Stok Barang</h3>
+					</div>
 				</div>
 			</div>
-		</div>
-		<div class="card-body">
-			<div class="table-responsive">
-				<table class="table table-striped table-bordered" id="table-stok" width="100%" cellspacing="0">
-					<thead>
-						<tr>
-							<th>Nama Barang</th>
-							<th>Ukuran</th>
-							<th>Warna</th>
-							<th>Jumlah</th>
-						</tr>
-					</thead>
-					<tbody>
-					</tbody>
-				</table>
+			<div class="card-body">
+				<div class="table-responsive">
+					<table class="table table-striped table-bordered" id="table-stok" width="100%" cellspacing="0">
+						<thead>
+							<tr>
+								<th>Nama Barang</th>
+								<th>Ukuran</th>
+								<th>Warna</th>
+								<th>Jumlah</th>
+							</tr>
+						</thead>
+						<tbody>
+						</tbody>
+					</table>
+				</div>
 			</div>
 		</div>
 	</div>
-    <div class="card mb-3">
-		<div class="card-header">
-			<div class="row">
-				<div class="col-sm-6">
-					<h3>Data Barang Masuk</h3>
-				</div>
-				<div class="col-sm-6 text-right">
-				<?php if($this->data['users_groups']->id == 2){ ?>
-					<?php if ($is_can_create) {?>
-						<a href="<?php echo base_url() ?>barang_masuk/create" class="btn btn-primary"><i class="fa fa-plus"></i> Barang</a>
+	<div class="row data-barang-masuk <?php if($this->data['users_groups']->id == 1){ echo "d-none"; } ?>">
+		<div class="card col-12 mb-3">
+			<div class="card-header">
+				<div class="row">
+					<div class="col-sm-6">
+						<h3>Data Barang Masuk</h3>
+					</div>
+					<div class="col-sm-6 text-right">
+					<?php if($this->data['users_groups']->id == 2){ ?>
+						<?php if ($is_can_create) {?>
+							<a href="<?php echo base_url() ?>barang_masuk/create" class="btn btn-primary"><i class="fa fa-plus"></i> Barang</a>
+						<?php }?>
 					<?php }?>
-				<?php }?>
+					</div>
 				</div>
 			</div>
-		</div>
-		<div class="card-body">
-			<div class="table-responsive">
-				<table class="table table-striped table-bordered" id="table" width="100%" cellspacing="0">
-					<thead>
-						<tr>
-							<th>Nama Barang</th>
-							<?php if($this->data['users_groups']->id == 1){ ?>
-							<th>Gudang</th>
-							<?php } ?>
-							<?php if($this->data['users_groups']->id == 2){ ?>
-							<th>Koli</th>
-							<?php } ?>
-							<th>Ukuran</th>
-							<th>Status Ukuran</th>
-							<th>Warna</th>
-							<?php if($this->data['users_groups']->id == 2){ ?>
-							<th>Jumlah Koli</th>
-							<?php } ?>
-							<th>Jumlah Barang</th>
-							<th>Tanggal</th>
-							<?php if($this->data['users_groups']->id == 1){ ?>
-							<th>Action</th>
-							<?php } ?>
-						</tr>
-					</thead>
-					<tbody>
-					</tbody>
-				</table>
-			</div>
+			<?php if($this->data['users_groups']->id != 1){ ?>
+				<div class="show-not-admin">
+					<div class="card-body">
+						<div class="table-responsive">
+							<table class="table table-striped table-bordered" id="table" width="100%" cellspacing="0">
+								<thead>
+									<tr>
+										<th>Nama Barang</th>
+										<?php if($this->data['users_groups']->id == 1){ ?>
+										<th>Gudang</th>
+										<?php } ?>
+										<?php if($this->data['users_groups']->id == 2){ ?>
+										<th>Koli</th>
+										<?php } ?>
+										<th>Ukuran</th>
+										<th>Status Ukuran</th>
+										<th>Warna</th>
+										<?php if($this->data['users_groups']->id == 2){ ?>
+										<th>Jumlah Koli</th>
+										<?php } ?>
+										<th>Jumlah Barang</th>
+										<th>Tanggal</th>
+										<?php if($this->data['users_groups']->id == 1){ ?>
+										<th>Action</th>
+										<?php } ?>
+									</tr>
+								</thead>
+								<tbody>
+								</tbody>
+							</table>
+						</div>
+					</div>
+				</div>
+			<?php } ?>
+			<?php if($this->data['users_groups']->id == 1){ ?>
+				<div class="show-admin <?php if($this->data['users_groups']->id != 1){ echo "d-none"; } ?>">
+					<div class="card-body">
+						<div class="table-responsive gudang-a" style="display:none;">
+							<table class="table table-striped table-bordered" id="table-gudang-a" width="100%" cellspacing="0">
+								<thead>
+									<tr>
+										<th>Nama Barang</th>
+										<th>Koli</th>
+										<th>Ukuran</th>
+										<th>Status Ukuran</th>
+										<th>Warna</th>
+										<th>Jumlah Koli</th>
+										<th>Jumlah Barang</th>
+										<th>Tanggal</th>
+										<th>Action</th>
+									</tr>
+								</thead>
+								<tbody>
+								</tbody>
+							</table>
+						</div>
+						<div class="table-responsive gudang-b" style="display:none;">
+							<table class="table table-striped table-bordered" id="table-gudang-b" width="100%" cellspacing="0">
+								<thead>
+									<tr>
+										<th>Nama Barang</th>
+										<th>Ukuran</th>
+										<th>Status Ukuran</th>
+										<th>Warna</th>
+										<th>Jumlah Barang</th>
+										<th>Tanggal</th>
+										<th>Action</th>
+									</tr>
+								</thead>
+								<tbody>
+								</tbody>
+							</table>
+						</div>
+					</div>
+				</div>
+			<?php } ?>
 		</div>
 	</div>
 </section>

@@ -98,7 +98,7 @@ define([
         },
         
         grafikPendapatan : function(data) {
-            
+            console.log(data);
             Highcharts.chart('container-grafik-pendapatan', {
                 chart: {
                     type: 'column'
@@ -146,7 +146,7 @@ define([
             
                 series: [{
                     name: data.tahun,
-                    data: [data.pendapatan[1],data.pendapatan[2],data.pendapatan[3],data.pendapatan[4],data.pendapatan[5],data.pendapatan[6],data.pendapatan[7],data.pendapatan[8],data.pendapatan[9],data.pendapatan[10],data.pendapatan[11],data.pendapatan[12],],
+                    data: [data.pendapatan[1],data.pendapatan[2],data.pendapatan[3],data.pendapatan[4],data.pendapatan[5],data.pendapatan[6],data.pendapatan[7],data.pendapatan[8],data.pendapatan[9],data.pendapatan[10],data.pendapatan[11],data.pendapatan[12]],
                     pointStart: 0,
                 }]
             });

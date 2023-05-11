@@ -85,17 +85,15 @@ class barang_masuk_model extends CI_Model
 
     function getAllBy($limit,$start,$search,$col,$dir, $where = array())
     {
-		if($this->data['users_groups']->id == 2){
+		if($this->data['users_groups']->id == 2 || $where['id_gudang'] == 1){
             $this->db->select("barang_masuk.*, barang.id as id_barang, barang.nama as barang_name, gudang.nama as gudang_name, koli.nama as koli_name, warna.nama as warna_name")->from("barang_masuk");
-		}else if($this->data['users_groups']->id == 3){
+            $this->db->join("koli", "koli.id = barang_masuk.id_koli");
+		}else if($this->data['users_groups']->id == 3 || $where['id_gudang'] == 2){
             $this->db->select("barang_masuk.*, barang.id as id_barang, barang.nama as barang_name, gudang.nama as gudang_name, warna.nama as warna_name")->from("barang_masuk");
         }
         $this->db->join("barang", "barang.id = barang_masuk.id_barang");
         $this->db->join("gudang", "gudang.id = barang_masuk.id_gudang");
         $this->db->join("warna", "warna.id = barang_masuk.id_warna");
-		if($this->data['users_groups']->id == 2){
-            $this->db->join("koli", "koli.id = barang_masuk.id_koli");
-        }
         $this->db->where("barang_masuk.is_deleted",0);  
         $this->db->where($where);  
         $this->db->limit($limit,$start)->order_by($col,$dir);
@@ -120,10 +118,14 @@ class barang_masuk_model extends CI_Model
 
     function getCountAllBy($limit,$start,$search,$order,$dir, $where = array())
     { 
-        $this->db->select("barang_masuk.*, barang.id as id_barang, gudang.id as id_gudang, barang.nama as barang_name, gudang.nama as gudang_name, koli.nama as koli_name, warna.nama as warna_name")->from("barang_masuk");
+        if($this->data['users_groups']->id == 2 || $where['id_gudang'] == 1){
+            $this->db->select("barang_masuk.*, barang.id as id_barang, barang.nama as barang_name, gudang.nama as gudang_name, koli.nama as koli_name, warna.nama as warna_name")->from("barang_masuk");
+            $this->db->join("koli", "koli.id = barang_masuk.id_koli");
+		}else if($this->data['users_groups']->id == 3 || $where['id_gudang'] == 2){
+            $this->db->select("barang_masuk.*, barang.id as id_barang, barang.nama as barang_name, gudang.nama as gudang_name, warna.nama as warna_name")->from("barang_masuk");
+        }
         $this->db->join("barang", "barang.id = barang_masuk.id_barang");
         $this->db->join("gudang", "gudang.id = barang_masuk.id_gudang");
-        $this->db->join("koli", "koli.id = barang_masuk.id_koli");
         $this->db->join("warna", "warna.id = barang_masuk.id_warna");
         $this->db->where("barang_masuk.is_deleted",0);  
         $this->db->where($where);  

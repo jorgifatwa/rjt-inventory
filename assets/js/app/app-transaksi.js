@@ -53,7 +53,7 @@ define([
                     "type": "POST",
                 },
                 "columns": [
-                    { "data": "no_faktur" },
+                    { "data": "no_resi" },
                     { "data": "tanggal" },
                     { "data": "action" ,"orderable": false}
                 ]

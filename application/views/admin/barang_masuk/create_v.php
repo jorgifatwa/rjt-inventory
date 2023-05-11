@@ -39,7 +39,7 @@
                     <h3>
                         Daftar Barang Masuk
                     </h3>
-                    <div class="row data-barang control-group">                        
+                    <div class="row data-barang">                
                         
                     </div>
 
