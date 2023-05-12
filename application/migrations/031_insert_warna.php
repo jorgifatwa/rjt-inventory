@@ -45,6 +45,12 @@ class Migration_insert_warna extends CI_Migration {
             array('id'=>26,'nama'=>'Hitam - Kuning', 'description'=> ''),
             array('id'=>27,'nama'=>'Hitam - Putih', 'description'=> ''),
             array('id'=>28,'nama'=>'Cream - Hijau', 'description'=> ''),
+            array('id'=>29,'nama'=>'Hijau Tua', 'description'=> ''),
+            array('id'=>30,'nama'=>'Sage', 'description'=> ''),
+            array('id'=>31,'nama'=>'Cream', 'description'=> ''),
+            array('id'=>32,'nama'=>'Hitam - Ungu', 'description'=> ''),
+            array('id'=>33,'nama'=>'List Merah', 'description'=> ''),
+            array('id'=>34,'nama'=>'B&Y', 'description'=> ''),
         );
         $this->db->insert_batch('warna', $data_menu); 
 	} 

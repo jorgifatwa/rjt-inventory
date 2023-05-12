@@ -7,7 +7,7 @@
       </div><!-- /.col -->
       <div class="col-sm-6">
         <ol class="breadcrumb float-sm-right">
-          <li class="breadcrumb-item"><a href="<?php echo base_url() ?>transaksi"></i>Transksi</a></li>
+          <li class="breadcrumb-item"><a href="<?php echo base_url() ?>transaksi"></i>Transaksi</a></li>
           <li class="breadcrumb-item active">Detail Transaksi</li>
         </ol>
       </div><!-- /.col -->
@@ -25,17 +25,17 @@
                 <div class="col-md-6">
                   <div class="row">
                     <div class="col-nd-6 p-2">
-                      <img src="<?php echo base_url() ?>assets/images/logo-shopee.png" width="50" alt="">
+                      <img src="<?php echo base_url() ?>assets/images/logo-<?php echo strtolower($marketplace) ?>.png" width="50" alt="">
                     </div>
                     <div class="col-nd-6 p-2 ml-2">
-                      <h5>Shopee</h5>
-                      <p class="text-secondary">www.shopee.com</p>
+                      <h5><?php echo $marketplace ?></h5>
+                      <p class="text-secondary">www.<?php echo strtolower($marketplace) ?>.com</p>
                     </div>
                   </div>
                 </div>
                 <div class="col-md-6 text-right">
                   <b class="text-secondary">Dibuat Oleh</b>
-                  <p class="text-secondary">Operator B</p>
+                  <p class="text-secondary"><?php echo $dibuat_oleh ?></p>
                 </div>
               </div>
               <div class="row">
@@ -44,11 +44,11 @@
                     <div class="row">
                       <div class="col-md-6">
                         <b>No. Resi</b>
-                        <p>12389476128974361293</p>
+                        <p><?php echo $no_resi ?></p>
                       </div>
                       <div class="col-md-6 text-right">
                         <b>Tanggal</b>
-                        <p>02 Februari 2023</p>
+                        <p><?php echo $tanggal ?></p>
                       </div>
                     </div>
                   </div>
@@ -71,15 +71,23 @@
                       </tr>
                     </thead>
                     <tbody>
+                      <?php
+                        $total = [];
+                        $no = 1;
+                        foreach ($barang_keluar as $key => $barang_keluar) { 
+                          $sub_total = $barang_keluar->jumlah * $barang_keluar->harga_jual_biasa;
+                          array_push($total, $sub_total);
+                      ?>
                       <tr>
-                        <th scope="row">1</th>
-                        <td>Mark</td>
-                        <td>Otto</td>
-                        <td>@mdo</td>
-                        <td>@mdo</td>
-                        <td>@mdo</td>
-                        <td>@mdo</td>
+                        <th scope="row"><?php echo $no; ?></th>
+                        <td><?php echo $barang_keluar->barang_name ?></td>
+                        <td><?php echo $barang_keluar->warna_name ?></td>
+                        <td><?php echo $barang_keluar->ukuran ?></td>
+                        <td><?php echo $barang_keluar->jumlah ?></td>
+                        <td><?php echo "Rp. ".number_format($barang_keluar->harga_jual_biasa) ?></td>
+                        <td><?php echo "Rp. ".number_format($sub_total) ?></td>
                       </tr>
+                      <?php $no++; } ?>
                       <tr>
                         <td colspan="6" class="text-center">
                           <h4>      
@@ -88,7 +96,7 @@
                         </td>
                         <td>
                           <h4>      
-                          Rp. 2.000.000
+                          <?php echo "Rp. ".number_format(array_sum($total)) ?>
                           </h4>  
                         </td>
                       </tr>

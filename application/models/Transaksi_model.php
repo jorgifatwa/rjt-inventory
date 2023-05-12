@@ -69,6 +69,12 @@ class Transaksi_model extends CI_Model
         return $this->db->insert_id();
     }
 
+    public function insert_retur($data){
+        $this->db->insert("retur", $data);
+        return $this->db->insert_id();
+    }
+
+
     public function update($data,$where){
         $this->db->update("transaksi", $data, $where);
         return $this->db->affected_rows();

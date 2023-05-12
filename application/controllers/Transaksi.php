@@ -60,9 +60,14 @@ class Transaksi extends Admin_Controller
 			$transaksi = $this->transaksi_model->getDetailTransaksi(array("transaksi.id" => $this->data['id']));
 			$barang_keluar = $this->barang_keluar_model->getAllById(array("barang_keluar.id_transaksi" => $this->data['id']));
 
-			echo "<pre>";
-			print_r($barang_keluar);
-			die();
+			$this->data['barang_keluar'] = $barang_keluar;
+			$this->data['no_resi'] = $barang_keluar[0]->no_resi;
+			$this->data['marketplace'] = $barang_keluar[0]->marketplace_name;
+			$this->data['id_marketplace'] = $barang_keluar[0]->id_marketplace;
+			$this->data['tanggal'] = $barang_keluar[0]->tanggal;
+			$this->data['dibuat_oleh'] = $barang_keluar[0]->first_name." ".$barang_keluar[0]->last_name;
+
+			// $this->data['no_resi'] => $transaksi
 			$this->data['content'] = 'admin/transaksi/detail_v';
 			$this->load->view('admin/layouts/page', $this->data);
 		}
@@ -108,12 +113,13 @@ class Transaksi extends Admin_Controller
 
 				if ($this->data['is_can_read'] && $data->is_deleted == 0) {
 					$edit_url = "<a href='" . base_url() . "transaksi/detail/" . $data->id . "' class='btn btn-sm btn-info white'> Detail</a>";
+					$retur_url = "<a href='" . base_url() . "transaksi/retur/" . $data->id . "' class='btn btn-sm btn-danger white'> Retur</a>";
 				}
 
 				$nestedData['id'] = $start + $key + 1;
 				$nestedData['no_resi'] = $data->no_resi;
 				$nestedData['tanggal'] = $data->created_at;
-				$nestedData['action'] = $edit_url;
+				$nestedData['action'] = $edit_url." ".$retur_url;
 				$new_data[] = $nestedData;
 			}
 		}
@@ -152,6 +158,87 @@ class Transaksi extends Admin_Controller
 		}
 
 		echo json_encode($response_data);
+	}
+
+	public function retur(){
+		$this->form_validation->set_rules('id_barang', "Barang Harus Dipilih", 'trim|required');
+		$this->form_validation->set_rules('id_warna', "Warna Harus Dipilih", 'trim|required');
+		$this->form_validation->set_rules('ukuran', "Warna Harus Diisi", 'trim|required');
+		$this->form_validation->set_rules('jumlah', "Jumlah Harus Diisi", 'trim|required');
+		
+		if ($this->form_validation->run() === TRUE) {
+			$barang_keluar = $this->barang_keluar_model->getAllById(array("barang_keluar.id_transaksi" => $this->input->post('id_transaksi'), 'barang_keluar.id_barang' => $this->input->post('id_barang'), 'barang_keluar.id_warna' => $this->input->post('id_warna'), 'barang_keluar.ukuran' => $this->input->post('ukuran')));
+			if($barang_keluar[0]->jumlah > $this->input->post('jumlah')){
+				$data = array(
+					'id_transaksi' => $this->input->post('id_transaksi'),
+					'id_barang_keluar' => $barang_keluar[0]->barang_keluar_id,
+					'id_barang' => $this->input->post('id_barang'),
+					'id_warna' => $this->input->post('id_warna'),
+					'ukuran' => $this->input->post('ukuran'),
+					'jumlah' => $this->input->post('jumlah'),
+					'description' => $this->input->post('description'),
+					'created_at' => date('Y-m-d H:i:s'),
+					'created_by' => $this->data['users']->id
+				);
+
+				$total = $barang_keluar[0]->jumlah - $this->input->post('jumlah');
+
+				$data_update = array(
+					'jumlah' => $total
+				);
+
+				$update = $this->barang_keluar_model->update($data_update, array("id" => $barang_keluar[0]->barang_keluar_id));
+	
+				if ($this->transaksi_model->insert_retur($data)) {
+					$this->session->set_flashdata('message', "Retur Baru Berhasil Disimpan");
+					redirect("transaksi");
+				} else {
+					$this->session->set_flashdata('message_error', "Retur Baru Gagal Disimpan");
+					redirect("transaksi");
+				}
+			}else{
+				$this->session->set_flashdata('message_error', "Jumlah Terlalu Besar");
+				redirect("transaksi/retur/".$this->input->post('id_transaksi'));
+			}
+			
+		} else {
+			$this->data['content'] = 'admin/transaksi/retur_v';
+			$this->data['id_transaksi'] = $this->uri->segment(3);
+
+			$this->data['barang_keluar'] = $this->barang_keluar_model->getAllByIdRetur(array("barang_keluar.id_transaksi" => $this->data['id_transaksi']));
+
+			$this->load->view('admin/layouts/page', $this->data);
+		}
+	}
+
+	public function getWarna(){
+		$barang_keluar = $this->barang_keluar_model->getAllById(array("barang_keluar.id_transaksi" => $this->input->post('id_transaksi'), 'barang_keluar.id_barang' => $this->input->post('id_barang')));
+		if(!empty($barang_keluar)){	
+            $response_data['status'] = true;
+            $response_data['data'] = $barang_keluar;
+            $response_data['message'] = 'Berhasil Mengambil Data';
+        }else{
+            $response_data['status'] = false;
+            $response_data['data'] = [];
+            $response_data['message'] = 'Tidak Ditemukan';
+        }
+
+        echo json_encode($response_data);
+	}
+
+	public function getUkuran(){
+		$barang_keluar = $this->barang_keluar_model->getAllById(array("barang_keluar.id_transaksi" => $this->input->post('id_transaksi'), 'barang_keluar.id_barang' => $this->input->post('id_barang'), 'barang_keluar.id_warna' => $this->input->post('id_warna')));
+		if(!empty($barang_keluar)){	
+            $response_data['status'] = true;
+            $response_data['data'] = $barang_keluar;
+            $response_data['message'] = 'Berhasil Mengambil Data';
+        }else{
+            $response_data['status'] = false;
+            $response_data['data'] = [];
+            $response_data['message'] = 'Tidak Ditemukan';
+        }
+
+        echo json_encode($response_data);
 	}
 	
 }

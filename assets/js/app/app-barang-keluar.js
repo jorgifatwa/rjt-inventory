@@ -25,6 +25,7 @@ define([
             App.initConfirm();
             App.initEvent();
             App.scanBarang();
+            App.changeGudang();
             $(".loadingpage").hide();
         },
         initEvent : function(){
@@ -44,7 +45,156 @@ define([
                     width: "100%",
                     placeholder: "Pilih Gudang",
                 });
+                $('#id_gudang_lihat').select2({
+                    width: "100%",
+                    placeholder: "Pilih Gudang",
+                });
             }
+        },
+        changeGudang : function(){
+            $('#id_gudang_lihat').on('change', function () {
+                var id_gudang = $(this).val();
+
+                console.log('id_gudang', id_gudang)
+                $('.gudang-a').hide();
+                $('.gudang-b').hide();
+
+                if(App.table){
+                    App.table.destroy();
+                }
+
+                if(App.table_stok){
+                    App.table_stok.destroy();
+                }
+
+                // if ( $.fn.dataTable.isDataTable( '#table' ) ) {
+                //     App.table.destroy();
+                // }
+    
+                // if ( $.fn.dataTable.isDataTable( '#table-stok' ) ) {
+                //     App.table_stok.destroy();
+                // }
+                
+                App.table_stok =
+                $('#table-stok').DataTable({
+                    "language": {
+                        "search": "Cari",
+                        "lengthMenu": "Lihat _MENU_ data",
+                        "zeroRecords": "Tidak ada data yang cocok ditemukan",
+                        "info": "Menampilkan _START_ hingga _END_ dari _TOTAL_ data",
+                        "infoEmpty": "Tidak ada data di dalam tabel",
+                        "infoFiltered": "(cari dari _MAX_ total catatan)",
+                        "loadingRecords": "Loading...",
+                        "processing": "Processing...",
+                        "paginate": {
+                            "first":      "Pertama",
+                            "last":       "Terakhir",
+                            "next":       "Selanjutnya",
+                            "previous":   "Sebelumnya"
+                        },
+                    },
+                    "order": [[ 0, "asc" ]], //agar kolom id default di order secara desc
+                    "processing": true,
+                    "serverSide": true,
+                    "ajax":{
+                        "url": App.baseUrl+"barang_masuk/dataListStok",
+                        "dataType": "json",
+                        "type": "POST",
+                        "data": {id_gudang:id_gudang},
+                    },
+                    "columns":  [
+                        { "data": "barang_name" },
+                        { "data": "ukuran" },
+                        { "data": "warna_name" },
+                        { "data": "total_barang" },
+                    ]
+                });
+                if(id_gudang == 1){
+                    var data_column = [
+                        { "data": "barang_name" },
+                        { "data": "ukuran" },
+                        { "data": "warna_name" },
+                        { "data": "gudang_name" },
+                        { "data": "jumlah" },
+                        { "data": "tanggal" },
+                        { "data": "action" ,"orderable": false}
+                    ];
+                    $('.gudang-a').show();
+
+                    App.table = 
+                    $('#table-gudang-a').DataTable({
+                        "language": {
+                            "search": "Cari",
+                            "lengthMenu": "Lihat _MENU_ data",
+                            "zeroRecords": "Tidak ada data yang cocok ditemukan",
+                            "info": "Menampilkan _START_ hingga _END_ dari _TOTAL_ data",
+                            "infoEmpty": "Tidak ada data di dalam tabel",
+                            "infoFiltered": "(cari dari _MAX_ total catatan)",
+                            "loadingRecords": "Loading...",
+                            "processing": "Processing...",
+                            "paginate": {
+                                "first":      "Pertama",
+                                "last":       "Terakhir",
+                                "next":       "Selanjutnya",
+                                "previous":   "Sebelumnya"
+                            },
+                        },
+                        "order": [[ 0, "asc" ]], //agar kolom id default di order secara desc
+                        "processing": true,
+                        "serverSide": true,
+                        "ajax":{
+                            "url": App.baseUrl+"barang_keluar/dataList",
+                            "dataType": "json",
+                            "type": "POST",
+                            "data": {id_gudang:id_gudang},
+                        },
+                        "columns": data_column
+                    });
+                }else if(id_gudang == 2){
+                    var data_column = [
+                        { "data": "barang_name" },
+                        { "data": "ukuran" },
+                        { "data": "warna_name" },
+                        { "data": "marketplace_name" },
+                        { "data": "jumlah" },
+                        { "data": "tanggal" },
+                        { "data": "action" ,"orderable": false}
+                    ];
+                    $('.gudang-b').show();
+                    
+                    App.table = 
+                    $('#table-gudang-b').DataTable({
+                        "language": {
+                            "search": "Cari",
+                            "lengthMenu": "Lihat _MENU_ data",
+                            "zeroRecords": "Tidak ada data yang cocok ditemukan",
+                            "info": "Menampilkan _START_ hingga _END_ dari _TOTAL_ data",
+                            "infoEmpty": "Tidak ada data di dalam tabel",
+                            "infoFiltered": "(cari dari _MAX_ total catatan)",
+                            "loadingRecords": "Loading...",
+                            "processing": "Processing...",
+                            "paginate": {
+                                "first":      "Pertama",
+                                "last":       "Terakhir",
+                                "next":       "Selanjutnya",
+                                "previous":   "Sebelumnya"
+                            },
+                        },
+                        "order": [[ 0, "asc" ]], //agar kolom id default di order secara desc
+                        "processing": true,
+                        "serverSide": true,
+                        "ajax":{
+                            "url": App.baseUrl+"barang_keluar/dataList",
+                            "dataType": "json",
+                            "type": "POST",
+                            "data": {id_gudang:id_gudang},
+                        },
+                        "columns": data_column
+                    });
+                }
+                $('.data-stok-barang').removeClass('d-none');
+                $('.data-barang-keluar').removeClass('d-none');
+            });
         },
         scanBarang : function(){
             var i = -1;
@@ -217,95 +367,96 @@ define([
             return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
         },
         initTable : function(){
-            if($('#role').val() == 2){
-                var data_column =  [
-                    { "data": "barang_name" },
-                    { "data": "ukuran" },
-                    { "data": "warna_name" },
-                    { "data": "gudang_name" },
-                    { "data": "jumlah" },
-                    { "data": "tanggal" },
-                ]
-            }else if($('#role').val() == 3){
-                var data_column =  [
-                    { "data": "barang_name" },
-                    { "data": "ukuran" },
-                    { "data": "warna_name" },
-                    { "data": "marketplace_name" },
-                    { "data": "jumlah" },
-                    { "data": "tanggal" },
-                ]
-            }else{
-                var data_column =  [
-                    { "data": "barang_name" },
-                    { "data": "ukuran" },
-                    { "data": "warna_name" },
-                    { "data": "jumlah" },
-                    { "data": "tanggal" },
-                    { "data": "action" ,"orderable": false}
-                ]
+            if($('#role').val() != 1){
+                if($('#role').val() == 2){
+                    var data_column =  [
+                        { "data": "barang_name" },
+                        { "data": "ukuran" },
+                        { "data": "warna_name" },
+                        { "data": "gudang_name" },
+                        { "data": "jumlah" },
+                        { "data": "tanggal" },
+                    ]
+                }else if($('#role').val() == 3){
+                    var data_column =  [
+                        { "data": "barang_name" },
+                        { "data": "ukuran" },
+                        { "data": "warna_name" },
+                        { "data": "marketplace_name" },
+                        { "data": "jumlah" },
+                        { "data": "tanggal" },
+                    ]
+                }else{
+                    var data_column =  [
+                        { "data": "barang_name" },
+                        { "data": "ukuran" },
+                        { "data": "warna_name" },
+                        { "data": "jumlah" },
+                        { "data": "tanggal" },
+                        { "data": "action" ,"orderable": false}
+                    ]
+                }
+                App.table = $('#table-stok').DataTable({
+                    "language": {
+                        "search": "Cari",
+                        "lengthMenu": "Lihat _MENU_ data",
+                        "zeroRecords": "Tidak ada data yang cocok ditemukan",
+                        "info": "Menampilkan _START_ hingga _END_ dari _TOTAL_ data",
+                        "infoEmpty": "Tidak ada data di dalam tabel",
+                        "infoFiltered": "(cari dari _MAX_ total catatan)",
+                        "loadingRecords": "Loading...",
+                        "processing": "Processing...",
+                        "paginate": {
+                            "first":      "Pertama",
+                            "last":       "Terakhir",
+                            "next":       "Selanjutnya",
+                            "previous":   "Sebelumnya"
+                        },
+                    },
+                    "order": [[ 0, "asc" ]], //agar kolom id default di order secara desc
+                    "processing": true,
+                    "serverSide": true,
+                    "ajax":{
+                        "url": App.baseUrl+"barang_masuk/dataListStok",
+                        "dataType": "json",
+                        "type": "POST",
+                    },
+                    "columns":  [
+                        { "data": "barang_name" },
+                        { "data": "ukuran" },
+                        { "data": "warna_name" },
+                        { "data": "total_barang" },
+                    ]
+                });
+
+                App.table = $('#table').DataTable({
+                    "language": {
+                        "search": "Cari",
+                        "lengthMenu": "Lihat _MENU_ data",
+                        "zeroRecords": "Tidak ada data yang cocok ditemukan",
+                        "info": "Menampilkan _START_ hingga _END_ dari _TOTAL_ data",
+                        "infoEmpty": "Tidak ada data di dalam tabel",
+                        "infoFiltered": "(cari dari _MAX_ total catatan)",
+                        "loadingRecords": "Loading...",
+                        "processing": "Processing...",
+                        "paginate": {
+                            "first":      "Pertama",
+                            "last":       "Terakhir",
+                            "next":       "Selanjutnya",
+                            "previous":   "Sebelumnya"
+                        },
+                    },
+                    "order": [[ 0, "asc" ]], //agar kolom id default di order secara desc
+                    "processing": true,
+                    "serverSide": true,
+                    "ajax":{
+                        "url": App.baseUrl+"barang_keluar/dataList",
+                        "dataType": "json",
+                        "type": "POST",
+                    },
+                    "columns": data_column
+                });
             }
-            App.table = $('#table-stok').DataTable({
-                "language": {
-                    "search": "Cari",
-                    "lengthMenu": "Lihat _MENU_ data",
-                    "zeroRecords": "Tidak ada data yang cocok ditemukan",
-                    "info": "Menampilkan _START_ hingga _END_ dari _TOTAL_ data",
-                    "infoEmpty": "Tidak ada data di dalam tabel",
-                    "infoFiltered": "(cari dari _MAX_ total catatan)",
-                    "loadingRecords": "Loading...",
-                    "processing": "Processing...",
-                    "paginate": {
-                        "first":      "Pertama",
-                        "last":       "Terakhir",
-                        "next":       "Selanjutnya",
-                        "previous":   "Sebelumnya"
-                    },
-                },
-                "order": [[ 0, "asc" ]], //agar kolom id default di order secara desc
-                "processing": true,
-                "serverSide": true,
-                "ajax":{
-                    "url": App.baseUrl+"barang_masuk/dataListStok",
-                    "dataType": "json",
-                    "type": "POST",
-                },
-                "columns":  [
-                    { "data": "barang_name" },
-                    { "data": "ukuran" },
-                    { "data": "warna_name" },
-                    { "data": "total_barang" },
-                ]
-            });
-
-            App.table = $('#table').DataTable({
-                "language": {
-                    "search": "Cari",
-                    "lengthMenu": "Lihat _MENU_ data",
-                    "zeroRecords": "Tidak ada data yang cocok ditemukan",
-                    "info": "Menampilkan _START_ hingga _END_ dari _TOTAL_ data",
-                    "infoEmpty": "Tidak ada data di dalam tabel",
-                    "infoFiltered": "(cari dari _MAX_ total catatan)",
-                    "loadingRecords": "Loading...",
-                    "processing": "Processing...",
-                    "paginate": {
-                        "first":      "Pertama",
-                        "last":       "Terakhir",
-                        "next":       "Selanjutnya",
-                        "previous":   "Sebelumnya"
-                    },
-                },
-                "order": [[ 0, "asc" ]], //agar kolom id default di order secara desc
-                "processing": true,
-                "serverSide": true,
-                "ajax":{
-                    "url": App.baseUrl+"barang_keluar/dataList",
-                    "dataType": "json",
-                    "type": "POST",
-                },
-                "columns": data_column
-            });
-
             
         },
         initValidation : function(){
@@ -377,7 +528,7 @@ define([
             }
         },
         initConfirm :function(){
-            $('#table tbody').on( 'click', '.delete', function () {
+            $('#table-gudang-a tbody').on( 'click', '.delete', function () {
                 var url = $(this).attr("url");
                 console.log(url);
                 App.confirm("Apakah Anda Yakin Untuk Mengubah Ini?",function(){
@@ -390,6 +541,26 @@ define([
                             toastr.error(data.msg);
                         } else {
                             toastr.success(data.msg);
+                            App.table_stok.ajax.reload(null, true);
+                            App.table.ajax.reload(null, true);
+                        }
+                    });
+                })
+            });
+            $('#table-gudang-b tbody').on( 'click', '.delete', function () {
+                var url = $(this).attr("url");
+                console.log(url);
+                App.confirm("Apakah Anda Yakin Untuk Mengubah Ini?",function(){
+                   $.ajax({
+                      method: "GET",
+                      url: url
+                    }).done(function( msg ) {
+                        var data = JSON.parse(msg);
+                        if (data.status == false) {
+                            toastr.error(data.msg);
+                        } else {
+                            toastr.success(data.msg);
+                            App.table_stok.ajax.reload(null, true);
                             App.table.ajax.reload(null, true);
                         }
                     });

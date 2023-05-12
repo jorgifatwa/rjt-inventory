@@ -28,6 +28,7 @@ class Barang_keluar extends Admin_Controller
 			$this->data['content'] = 'errors/html/restrict';
 		}
 
+		$this->data['gudangs'] = $this->gudang_model->getAllById();
 		$this->load->view('admin/layouts/page', $this->data);
 	}
 
@@ -190,6 +191,29 @@ class Barang_keluar extends Admin_Controller
 				5 => 'barang_keluar.tanggal',
 				6 => '',
 			);
+		}else{
+			$id_gudang = $this->input->post('id_gudang');
+			if($id_gudang == 1){
+				$columns = array(
+					0 => 'barang.nama',
+					1 => 'barang_keluar.ukuran',
+					2 => 'barang_keluar.warna',
+					3 => 'gudang.name',
+					4 => 'barang_keluar.jumlah',
+					5 => 'barang_keluar.tanggal',
+					6 => '',
+				);
+			}else{
+				$columns = array(
+					0 => 'barang.nama',
+					1 => 'barang_keluar.ukuran',
+					2 => 'barang_keluar.warna',
+					3 => 'marketplace.name',
+					4 => 'barang_keluar.jumlah',
+					5 => 'barang_keluar.tanggal',
+					6 => '',
+				);
+			}
 		}
 
 		$order = $columns[$this->input->post('order')[0]['column']];
@@ -200,6 +224,12 @@ class Barang_keluar extends Admin_Controller
 			$where = array('id_marketplace' => null);
 		}else if($this->data['users_groups']->id == 3){
 			$where = array('id_gudang' => null);
+		}else{
+			if($id_gudang == 1){
+				$where = array('id_marketplace' => null, 'id_gudang' => $id_gudang);
+			}else{
+				$where = array('id_gudang' => null, 'id_gudang' => $id_gudang);
+			}
 		}
 		$limit = 0;
 		$start = 0;
@@ -221,6 +251,22 @@ class Barang_keluar extends Admin_Controller
 					"barang_keluar.jumlah" => $search_value,
 					"barang_keluar.tanggal" => $search_value,
 				);
+			}else{
+				if($id_gudang == 1){
+					$search = array(
+						"barang.nama" => $search_value,
+						"gudang.nama" => $search_value,
+						"barang_keluar.jumlah" => $search_value,
+						"barang_keluar.tanggal" => $search_value,
+					);
+				}else{
+					$search = array(
+						"barang.nama" => $search_value,
+						"marketplace.nama" => $search_value,
+						"barang_keluar.jumlah" => $search_value,
+						"barang_keluar.tanggal" => $search_value,
+					);
+				}
 			}
 			$totalFiltered = $this->barang_keluar_model->getCountAllBy($limit, $start, $search, $order, $dir, $where);
 		} else {
@@ -239,11 +285,7 @@ class Barang_keluar extends Admin_Controller
 				$edit_url = "";
 				$delete_url = "";
 
-				if ($this->data['is_can_edit'] && $data->is_deleted == 0 && $data->created_at == date('Y-m-d')) {
-					$edit_url = "<a href='" . base_url() . "barang_keluar/edit/" . $data->id . "' class='btn btn-sm btn-info white'> Ubah</a>";
-				}
-
-				if ($this->data['is_can_delete'] && $data->created_at == date('Y-m-d')) {
+				if ($this->data['is_can_delete']) {
 					$delete_url = "<a href='#'
 						url='" . base_url() . "barang_keluar/destroy/" . $data->id . "/" . $data->is_deleted . "'
 						class='btn btn-sm btn-danger white delete'>Hapus
@@ -258,10 +300,16 @@ class Barang_keluar extends Admin_Controller
 					$nestedData['gudang_name'] = $data->gudang_name;
 				}else if($this->data['users_groups']->id == 3){
 					$nestedData['marketplace_name'] = $data->marketplace_name;
+				}else{
+					if($id_gudang == 1){
+						$nestedData['gudang_name'] = $data->gudang_name;
+					}else{
+						$nestedData['marketplace_name'] = $data->marketplace_name;
+					}
 				}
 				$nestedData['jumlah'] = $data->jumlah;
 				$nestedData['tanggal'] = $data->tanggal;
-				$nestedData['action'] = $edit_url . " " . $delete_url;
+				$nestedData['action'] = $delete_url;
 				$new_data[] = $nestedData;
 			}
 		}
@@ -304,15 +352,50 @@ class Barang_keluar extends Admin_Controller
 		$is_deleted = $this->uri->segment(4);
 		if (!empty($id)) {
 			$barang_keluar = $this->barang_keluar_model->getOneBy(array('barang_keluar.id' => $id));
-			$barang = $this->barang_model->getOneBy(array('barang.id' => $barang_keluar->id_barang));
+			
+			//STOCK KESELURUHAN
+			$barang = $this->stock_model->getOneBy(array('id_barang' => $barang_keluar->id_barang, 'ukuran' => $barang_keluar->ukuran, 'id_warna' => $barang_keluar->id_warna));
+					
+			$total = $barang->stock + $barang_keluar->jumlah;
 
-			$total = $barang->stock - $barang_keluar->jumlah; 
-
-			$data_barang = array(
+			$data_update = array(
 				'stock' => $total
 			);
 
-			$update = $this->barang_model->update($data_barang, array("barang.id" => $barang_keluar->id_barang));
+			$this->stock_model->update($data_update, array("id" => $barang->id));
+			
+			//UPDATE STOCK DI GUDANG
+			if($barang_keluar->id_gudang != null){
+				$barang = $this->stock_gudang_model->getOneBy(array('id_barang' => $barang_keluar->id_barang, 'ukuran' => $barang_keluar->ukuran, 'id_warna' => $barang_keluar->id_warna, 'id_gudang' => $barang_keluar->id_gudang));
+	
+				$total = $barang->stock - $barang_keluar->jumlah;
+	
+				$data_update = array(
+					'stock' => $total
+				);
+	
+				$this->stock_gudang_model->update($data_update, array("id" => $barang->id));
+
+				$barang = $this->stock_gudang_model->getOneBy(array('id_barang' => $barang_keluar->id_barang, 'ukuran' => $barang_keluar->ukuran, 'id_warna' => $barang_keluar->id_warna, 'id_gudang' => 1));
+	
+				$total = $barang->stock + $barang_keluar->jumlah;
+	
+				$data_update = array(
+					'stock' => $total
+				);
+	
+				$this->stock_gudang_model->update($data_update, array("id" => $barang->id));
+			}else{
+				$barang = $this->stock_gudang_model->getOneBy(array('id_barang' => $barang_keluar->id_barang, 'ukuran' => $barang_keluar->ukuran, 'id_warna' => $barang_keluar->id_warna, 'id_gudang' => 2));
+	
+				$total = $barang->stock + $barang_keluar->jumlah;
+	
+				$data_update = array(
+					'stock' => $total
+				);
+	
+				$this->stock_gudang_model->update($data_update, array("id" => $barang->id));
+			}
 			
 			$data = array(
 				'is_deleted' => ($is_deleted == 1) ? 0 : 1,

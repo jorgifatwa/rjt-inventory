@@ -299,7 +299,7 @@ class Barang_masuk extends Admin_Controller
 				$edit_url = "";
 				$delete_url = "";
 
-				if ($this->data['is_can_delete'] && $data->tanggal == date('Y-m-d')) {
+				if ($this->data['is_can_delete']) {
 					$delete_url = "<a href='#'
 						url='" . base_url() . "barang_masuk/destroy/" . $data->id . "/" . $data->is_deleted . "'
 						class='btn btn-sm btn-danger white delete'>Hapus

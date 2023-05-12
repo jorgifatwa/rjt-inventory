@@ -10,26 +10,49 @@ defined('BASEPATH') OR exit('No direct script access allowed');
  * @property CI_DB_forge         $dbforge
  * @property CI_DB_query_builder $db
  */
-class Migration_create_table_transaksi extends CI_Migration {
+class Migration_create_table_retur extends CI_Migration {
 
 
 	public function up()
 	{ 
-		$table = "transaksi";
+		$table = "retur";
 		$fields = array(
 			'id'           => [
 				'type'           => 'INT(11)',
 				'auto_increment' => TRUE,
 				'unsigned'       => TRUE,
 			],
-			'no_resi'          => [
-				'type' => 'VARCHAR(100)',
-				'null'       => TRUE,
+			'id_transaksi'          => [
+				'type' => 'TINYINT(4)',
+			],
+			'id_barang_keluar'          => [
+				'type' => 'TINYINT(4)',
+			],
+			'id_barang'      => [
+				'type' => 'TINYINT(4)',
+			],
+			'id_warna'      => [
+				'type' => 'TINYINT(4)',
+			],
+			'ukuran'      => [
+				'type' => 'INT(11)',
+			],
+			'jumlah'      => [
+				'type' => 'INT(11)',
+			],
+			'description'      => [
+				'type' => 'TEXT',
 			],
 			'created_at'      => [
 				'type' => 'DATETIME',
 			],
+			'updated_at'      => [
+				'type' => 'DATETIME',
+			],
 			'created_by'      => [
+				'type' => 'TINYINT(4)',
+			],
+			'updated_by'      => [
 				'type' => 'TINYINT(4)',
 			],
 			'is_deleted' => [
@@ -45,7 +68,7 @@ class Migration_create_table_transaksi extends CI_Migration {
 
 	public function down()
 	{
-		$table = "transaksi";
+		$table = "retur";
 		if ($this->db->table_exists($table))
 		{
 			$this->db->query(drop_foreign_key($table, 'api_key'));

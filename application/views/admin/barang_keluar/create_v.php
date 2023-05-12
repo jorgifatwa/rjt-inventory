@@ -56,7 +56,7 @@
                                 </div>
                             </div>
                         <?php } ?>
-                        <div class="col-md-6">
+                        <div class="<?php if($this->data['users_groups']->id != 3){ echo "col-md-12"; }else{ echo "col-md-6"; } ?>">
                             <div class="form-group">
                                 <label for="">Kode Barang</label>
                                 <div class="row">
@@ -66,16 +66,18 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="col-md-6">
-                            <div class="form-group">
-                                <label for="">No. Resi</label>
-                                <div class="row">
-                                    <div class="col-md-12">
-                                        <input type="text" id="no_resi" placeholder="No. Resi" class="form-control">
+                        <?php if($this->data['users_groups']->id == 3){ ?>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="">No. Resi</label>
+                                    <div class="row">
+                                        <div class="col-md-12">
+                                            <input type="text" id="no_resi" name="no_resi" placeholder="No. Resi" class="form-control">
+                                        </div>
                                     </div>
                                 </div>
                             </div>
-                        </div>
+                        <?php } ?>
                     </div>
                     <hr>
                     <div class="row mt-2">

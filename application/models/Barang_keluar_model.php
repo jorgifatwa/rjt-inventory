@@ -40,10 +40,28 @@ class Barang_keluar_model extends CI_Model
         return FALSE;
     }
     public function getAllById($where = array()){
-        $this->db->select("barang_keluar.*, barang.nama as barang_name")->from("barang_keluar");  
+        $this->db->select("barang_keluar.*, barang_keluar.id as barang_keluar_id, barang.nama as barang_name, transaksi.*, barang.harga_jual_biasa as harga_jual_biasa, warna.nama as warna_name, marketplace.nama as marketplace_name, users.first_name as first_name, users.last_name as last_name")->from("barang_keluar");  
+        $this->db->join("barang", "barang.id = barang_keluar.id_barang");
+        $this->db->join("transaksi", "transaksi.id = barang_keluar.id_transaksi");
+        $this->db->join("warna", "warna.id = barang_keluar.id_warna");
+        $this->db->join("marketplace", "marketplace.id = barang_keluar.id_marketplace");
+        $this->db->join("users", "users.id = barang_keluar.created_by");
+        $this->db->where($where);  
+        $this->db->where("barang_keluar.is_deleted",0);  
+
+        $query = $this->db->get();
+        if ($query->num_rows() >0){  
+            return $query->result(); 
+        } 
+        return FALSE;
+    }
+
+    public function getAllByIdRetur($where = array()){
+        $this->db->select("barang_keluar.id_barang as id_barang, barang.nama as barang_name")->from("barang_keluar");  
         $this->db->join("barang", "barang.id = barang_keluar.id_barang");
         $this->db->where($where);  
         $this->db->where("barang_keluar.is_deleted",0);  
+        $this->db->group_by("barang_keluar.id_barang");  
 
         $query = $this->db->get();
         if ($query->num_rows() >0){  
@@ -91,6 +109,14 @@ class Barang_keluar_model extends CI_Model
         }else if($this->data['users_groups']->id == 3){
             $this->db->select("barang_keluar.*, barang.nama as barang_name, marketplace.nama as marketplace_name, warna.nama as warna_name")->from("barang_keluar");  
             $this->db->join("marketplace", "marketplace.id = barang_keluar.id_marketplace");
+        }else{
+            if($where['id_gudang'] == 1){
+                $this->db->select("barang_keluar.*, barang.nama as barang_name, gudang.nama as gudang_name, warna.nama as warna_name")->from("barang_keluar");  
+                $this->db->join("gudang", "gudang.id = barang_keluar.id_gudang");
+            }else{
+                $this->db->select("barang_keluar.*, barang.nama as barang_name, marketplace.nama as marketplace_name, warna.nama as warna_name")->from("barang_keluar");  
+                $this->db->join("marketplace", "marketplace.id = barang_keluar.id_marketplace");
+            }
         }
         $this->db->join("warna", "warna.id = barang_keluar.id_warna");
         $this->db->join("barang", "barang.id = barang_keluar.id_barang");
@@ -123,6 +149,14 @@ class Barang_keluar_model extends CI_Model
         }else if($this->data['users_groups']->id == 3){
             $this->db->select("barang_keluar.*, barang.nama as barang_name, marketplace.nama as marketplace_name, warna.nama as warna_name")->from("barang_keluar");  
             $this->db->join("marketplace", "marketplace.id = barang_keluar.id_marketplace");
+        }else{
+            if($where['id_gudang'] == 1){
+                $this->db->select("barang_keluar.*, barang.nama as barang_name, gudang.nama as gudang_name, warna.nama as warna_name")->from("barang_keluar");  
+                $this->db->join("gudang", "gudang.id = barang_keluar.id_gudang");
+            }else{
+                $this->db->select("barang_keluar.*, barang.nama as barang_name, marketplace.nama as marketplace_name, warna.nama as warna_name")->from("barang_keluar");  
+                $this->db->join("marketplace", "marketplace.id = barang_keluar.id_marketplace");
+            }
         }
         $this->db->join("warna", "warna.id = barang_keluar.id_warna");
         $this->db->join("barang", "barang.id = barang_keluar.id_barang");
