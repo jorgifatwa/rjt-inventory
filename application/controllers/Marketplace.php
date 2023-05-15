@@ -7,6 +7,7 @@ class Marketplace extends Admin_Controller
 	{
 		parent::__construct();
 		$this->load->model('marketplace_model');
+		$this->load->model('barang_keluar_model');
 	}
 
 	public function index() 
@@ -139,6 +140,12 @@ class Marketplace extends Admin_Controller
 				$nestedData['id'] = $start + $key + 1;
 				$nestedData['nama'] = $data->nama;
 				$nestedData['description'] = substr(strip_tags($data->description), 0, 50);
+				$barang_keluar = $this->barang_keluar_model->getAllById(array("id_marketplace" => $data->id));
+				if(!empty($barang_keluar)){
+					$delete_url = "";
+					$edit_url = "";
+				}
+
 				$nestedData['action'] = $edit_url . " " . $delete_url;
 				$new_data[] = $nestedData;
 			}

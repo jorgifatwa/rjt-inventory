@@ -7,6 +7,7 @@ class Warna extends Admin_Controller
 	{
 		parent::__construct();
 		$this->load->model('warna_model');
+		$this->load->model('stock_model');
 	}
 
 	public function index() 
@@ -136,9 +137,16 @@ class Warna extends Admin_Controller
 						</a>";
 				}		
 
+				
 				$nestedData['id'] = $start + $key + 1;
 				$nestedData['nama'] = $data->nama;
 				$nestedData['description'] = substr(strip_tags($data->description), 0, 50);
+
+				$stock = $this->stock_model->getAllByIdNoGroupBy(array("id_warna" => $data->id));
+				if(!empty($stock)){
+					$delete_url = "";
+					$edit_url = "";
+				}
 				$nestedData['action'] = $edit_url . " " . $delete_url;
 				$new_data[] = $nestedData;
 			}

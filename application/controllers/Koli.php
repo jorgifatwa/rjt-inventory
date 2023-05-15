@@ -7,6 +7,7 @@ class Koli extends Admin_Controller
 	{
 		parent::__construct();
 		$this->load->model('koli_model');
+		$this->load->model('barang_masuk_model');
 	}
 
 	public function index() 
@@ -143,13 +144,17 @@ class Koli extends Admin_Controller
 						class='btn btn-sm btn-danger white delete'>Hapus
 						</a>";
 				}
-				$generator = new Picqer\Barcode\BarcodeGeneratorJPG();
 		
-
 				$nestedData['id'] = $start + $key + 1;
 				$nestedData['nama'] = $data->nama;
 				$nestedData['jumlah'] = $data->jumlah;
 				$nestedData['description'] = substr(strip_tags($data->description), 0, 50);
+				$barang_masuk = $this->barang_masuk_model->getAllById(array("id_koli" => $data->id));
+				if(!empty($barang_masuk)){
+					$delete_url = "";
+					$edit_url = "";
+				}
+
 				$nestedData['action'] = $edit_url . " " . $delete_url;
 				$new_data[] = $nestedData;
 			}
