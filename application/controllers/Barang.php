@@ -56,7 +56,7 @@ class Barang extends Admin_Controller
 		} else {
 			$dariDB = $this->barang_model->cekKodeBarang();
 
-			$nourut = substr($dariDB, 3, 4);
+			$nourut = substr($dariDB, 2, 4);
 			$kode_barang = $nourut + 1;
 
 			$this->data['kode_barang'] = 'B00'.$kode_barang;

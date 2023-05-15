@@ -7,6 +7,7 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
   <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
 
+  <link rel="icon" type="image/x-icon" href="<?php echo base_url() ?>assets/images/bg.png">
   <link rel="stylesheet" href="<?php echo base_url() ?>assets/css/adminlte.min.css">
   <link rel="stylesheet" href="<?php echo base_url() ?>assets/plugins/fontawesome-free/css/all.min.css">
   <link rel="stylesheet" type="text/css" href="<?php echo base_url(); ?>assets/plugins/select2/css/select2.min.css">
