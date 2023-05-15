@@ -43,18 +43,24 @@ class Stock extends Admin_Controller
 				'created_at' => date('Y-m-d H:i:s'),
 				'created_by' => $this->data['users']->id
 			);
-			$insert = $this->stock_model->insert($data);
-
-			$data['id_gudang'] = 1;
-			
-			$this->stock_gudang_model->insert($data);
-
-			if ($insert) {
-				$this->session->set_flashdata('message', "stock Baru Berhasil Disimpan");
-				redirect("stock");
-			} else {
-				$this->session->set_flashdata('message_error', "stock Baru Gagal Disimpan");
-				redirect("stock");
+			$stock = $this->stock_model->getAllByIdNoGroupBy(array("id_barang" => $this->input->post('id_barang'), 'id_warna' => $this->input->post('id_warna'), 'ukuran' => $this->input->post('ukuran')));
+			if(!empty($stock)){
+				$this->session->set_flashdata('message_error', "stock Barang Sudah Di Set");
+				redirect("stock/create", "refresh");
+			}else{
+				$insert = $this->stock_model->insert($data);
+	
+				$data['id_gudang'] = 1;
+				
+				$this->stock_gudang_model->insert($data);
+	
+				if ($insert) {
+					$this->session->set_flashdata('message', "stock Baru Berhasil Disimpan");
+					redirect("stock");
+				} else {
+					$this->session->set_flashdata('message_error', "stock Baru Gagal Disimpan");
+					redirect("stock");
+				}
 			}
 		} else {
 			$this->data['content'] = 'admin/stock/create_v';
@@ -84,15 +90,21 @@ class Stock extends Admin_Controller
 				'updated_by' => $this->data['users']->id
 			);
 
-			$id = $this->input->post('id');
-
-			$update = $this->stock_model->update($data, array("stock.id" => $id));
-			if ($update) {
-				$this->session->set_flashdata('message', "stock Berhasil Diubah");
-				redirect("stock", "refresh");
-			} else {
-				$this->session->set_flashdata('message_error', "stock Gagal Diubah");
-				redirect("stock", "refresh");
+			$stock = $this->stock_model->getAllByIdNoGroupBy(array("id_barang" => $this->input->post('id_barang'), 'id_warna' => $this->input->post('id_warna'), 'ukuran' => $this->input->post('ukuran')));
+			if(!empty($stock)){
+				$this->session->set_flashdata('message_error', "stock Barang Sudah Di Set");
+				redirect("stock/edit/".$this->input->post('id'), "refresh");
+			}else{
+				$id = $this->input->post('id');
+	
+				$update = $this->stock_model->update($data, array("stock.id" => $id));
+				if ($update) {
+					$this->session->set_flashdata('message', "stock Berhasil Diubah");
+					redirect("stock", "refresh");
+				} else {
+					$this->session->set_flashdata('message_error', "stock Gagal Diubah");
+					redirect("stock", "refresh");
+				}
 			}
 		} else {
 			if (!empty($_POST)) {
@@ -101,8 +113,13 @@ class Stock extends Admin_Controller
 				return redirect("stock/edit/" . $id);
 			} else {
 				$this->data['id'] = $this->uri->segment(3);
-				$stock = $this->stock_model->getAllById(array("stock.id" => $this->data['id']));
-				$this->data['nama'] 	= (!empty($stock)) ? $stock[0]->nama : "";
+				$stock = $this->stock_model->getAllByIdNoGroupBy(array("stock.id" => $this->data['id']));
+				$this->data['barangs'] = $this->barang_model->getAllById();
+				$this->data['warnas'] = $this->warna_model->getAllById();
+				$this->data['id_barang'] 	= (!empty($stock)) ? $stock[0]->id_barang : "";
+				$this->data['id_warna'] 	= (!empty($stock)) ? $stock[0]->id_warna : "";
+				$this->data['ukuran'] 	= (!empty($stock)) ? $stock[0]->ukuran : "";
+				$this->data['stock'] 	= (!empty($stock)) ? $stock[0]->stock : "";
 				$this->data['description'] = (!empty($stock)) ? $stock[0]->description : "";
 				$this->data['content'] = 'admin/stock/edit_v';
 				$this->load->view('admin/layouts/page', $this->data);

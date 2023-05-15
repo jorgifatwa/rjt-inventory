@@ -26,7 +26,7 @@
                           <select name="id_barang" id="id_barang" class="form-control">
                             <option value="">Pilih Barang</option>
                             <?php foreach ($barangs as $barang) {  ?>
-                              <option value="<?php echo $barang->id ?>" <?php if($barang->id == $stock->id_barang){ echo "selected"; } ?>><?php echo $barang->nama ?></option>
+                              <option value="<?php echo $barang->id ?>" <?php if($barang->id == $id_barang){ echo "selected"; } ?>><?php echo $barang->nama ?></option>
                             <?php } ?>
                           </select>
                       </div>
@@ -37,7 +37,7 @@
                           <select name="id_warna" id="id_warna" class="form-control">
                             <option value="">Pilih Warna</option>
                             <?php foreach ($warnas as $warna) {  ?>
-                              <option value="<?php echo $warna->id ?>" <?php if($warna->id == $stock->id_warna){ echo "selected"; } ?>><?php echo $warna->nama ?></option>
+                              <option value="<?php echo $warna->id ?>" <?php if($warna->id == $id_warna){ echo "selected"; } ?>><?php echo $warna->nama ?></option>
                             <?php } ?>
                           </select>
                       </div>
@@ -45,19 +45,20 @@
                   <div class="form-group row">
                       <label class="form-label col-sm-3" for="">Ukuran</label>
                       <div class="col-sm-4">
-                          <input type="text" class="form-control" name="ukuran" id="ukuran" value="<?php echo $stock->ukuran ?>">
+                          <input type="text" class="form-control" name="ukuran" placeholder="Ukuran" id="ukuran" value="<?php echo $ukuran ?>">
+                          <input type="hidden" class="form-control" name="id" placeholder="Ukuran" id="id" value="<?php echo $id ?>">
                       </div>
                   </div>
                   <div class="form-group row">
                       <label class="form-label col-sm-3" for="">Stock</label>
                       <div class="col-sm-4">
-                          <input type="number" class="form-control" name="stock" id="stock" value="<?php echo $stock->stock ?>">
+                          <input type="number" class="form-control" name="stock" placeholder="Stock" id="stock" value="<?php echo $stock ?>">
                       </div>
                   </div>
                   <div class="form-group row">
                       <label class="form-label col-sm-3" for="">Deskripsi</label>
                       <div class="col-sm-4">
-                          <textarea name="description" id="description" class="form-control" placeholder="Deskripsi" cols="30" rows="10"><?php echo $stock->description ?></textarea>
+                          <textarea name="description" id="description" class="form-control" placeholder="Deskripsi" cols="30" rows="10"><?php echo $description ?></textarea>
                       </div>
                   </div>
                 </div>
