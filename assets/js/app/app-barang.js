@@ -35,7 +35,7 @@ define([
                 }).done(function( data ) {
                     var data = JSON.parse(data);
                     for (let i = 0; i < data.data.length; i++) {
-                        var harga_marketplace = (harga_jual_biasa * data.data[i].ppn) / 100;
+                        var harga_marketplace = (data.data[i].ppn / 100) * harga_jual_biasa;
                         var total = harga_jual_biasa - harga_marketplace;
                         $('#harga_'+data.data[i].id).val(total);
                     }
