@@ -10,6 +10,8 @@ class Dashboard extends Admin_Controller {
 		$this->load->model('barang_masuk_model');
 		$this->load->model('barang_keluar_model');
 		$this->load->model('transaksi_model');
+		$this->load->model('stock_model');
+		$this->load->model('price_marketplace_model');
 	}
 	public function index() {
 		$this->load->helper('url');
@@ -19,15 +21,11 @@ class Dashboard extends Admin_Controller {
 			$this->data['content'] = 'errors/html/restrict';
 		}
 
-		$barang_masuk = $this->barang_masuk_model->getTotalModal(array(
-			'MONTH(barang_masuk.tanggal)' => date('m'),
-			'YEAR(barang_masuk.tanggal)' => date('Y'),
-			'id_gudang' => 1
-		));
+		$barang_masuk = $this->stock_model->getAllByIdNoGroupBy();
 
 		if($barang_masuk){
 			for ($i=0; $i < count($barang_masuk); $i++) { 
-				$total[$i] = $barang_masuk[$i]->harga_modal * $barang_masuk[$i]->jumlah_barang;
+				$total[$i] = $barang_masuk[$i]->harga_modal * $barang_masuk[$i]->stock;
 			}
 		}else{
 			$total = [];
@@ -39,9 +37,16 @@ class Dashboard extends Admin_Controller {
 			'id_gudang' => null
 		));
 
+		$price_marketplace = $this->price_marketplace_model->getAllById();
+
 		if($barang_keluar){
 			for ($i=0; $i < count($barang_keluar); $i++) { 
-				$total_keluar[$i] = $barang_keluar[$i]->harga_jual_biasa * $barang_keluar[$i]->jumlah;
+				foreach ($price_marketplace as $key => $price) {
+					if($barang_keluar[$i]->id_barang == $price->id_barang && $barang_keluar[$i]->id_marketplace == $price->id_marketplace ){
+						$total_keluar[$i] = $price->harga * $barang_keluar[$i]->jumlah;
+						$total_bersih[$i] = $price->harga - $barang_keluar[$i]->harga_modal; 
+					}
+				}
 			}
 		}else{
 			$total_keluar = [];
@@ -49,7 +54,7 @@ class Dashboard extends Admin_Controller {
 
 		$this->data['modal'] = array_sum($total);
 		$this->data['pendapatan_kotor'] = array_sum($total_keluar);
-		$this->data['pendapatan_bersih'] = array_sum($total_keluar) - array_sum($total);
+		$this->data['pendapatan_bersih'] = array_sum($total_bersih);
 
 		$this->load->view('admin/layouts/page', $this->data);
 	}
@@ -84,6 +89,7 @@ class Dashboard extends Admin_Controller {
 		
 		$i = 1;
 
+		$price_marketplace = $this->price_marketplace_model->getAllById();
 		
 		if(!empty($datas)){
 			foreach ($datas as $key => $data) {
@@ -91,7 +97,11 @@ class Dashboard extends Admin_Controller {
 				
 				for ($index=1; $index <= count($bulan); $index++) { 
 					if($bulan[$month[$i]] == $data_bulan[$index]){
-						$data_pendapatan[$index] = $data_pendapatan[$index] + $data->total;
+						foreach ($price_marketplace as $key => $price) {
+							if($data->id_barang == $price->id_barang && $data->id_marketplace == $price->id_marketplace){
+								$data_pendapatan[$index] = $data_pendapatan[$index] + ($data->jumlah * $price->harga);
+							}
+						}
 					}
 					$data_bulan[$i] = $bulan[$i];
 				}
@@ -159,6 +169,7 @@ class Dashboard extends Admin_Controller {
 		
 		$i = 1;
 
+		$price_marketplace = $this->price_marketplace_model->getAllById();
 		
 		if(!empty($data_shopees)){
 			foreach ($data_shopees as $key => $data) {
@@ -166,7 +177,11 @@ class Dashboard extends Admin_Controller {
 				
 				for ($index=1; $index <= count($bulan); $index++) { 
 					if($bulan[$month[$i]] == $data_bulan[$index]){
-						$data_pendapatan_shopee[$index] = $data_pendapatan_shopee[$index] + $data->total;
+						foreach ($price_marketplace as $key => $price) {
+							if($data->id_barang == $price->id_barang && $data->id_marketplace == $price->id_marketplace){
+								$data_pendapatan_shopee[$index] = $data_pendapatan_shopee[$index] + ($data->jumlah * $price->harga);
+							}
+						}
 					}
 					$data_bulan[$i] = $bulan[$i];
 				}
@@ -182,7 +197,11 @@ class Dashboard extends Admin_Controller {
 				
 				for ($index=1; $index <= count($bulan); $index++) { 
 					if($bulan[$month[$i]] == $data_bulan[$index]){
-						$data_pendapatan_tiktok[$index] = $data_pendapatan_tiktok[$index] + $data->total;
+						foreach ($price_marketplace as $key => $price) {
+							if($data->id_barang == $price->id_barang && $data->id_marketplace == $price->id_marketplace){
+								$data_pendapatan_tiktok[$index] = $data_pendapatan_tiktok[$index] + ($data->jumlah * $price->harga);
+							}
+						}
 					}
 					$data_bulan[$i] = $bulan[$i];
 				}
@@ -198,7 +217,11 @@ class Dashboard extends Admin_Controller {
 				
 				for ($index=1; $index <= count($bulan); $index++) { 
 					if($bulan[$month[$i]] == $data_bulan[$index]){
-						$data_pendapatan_tokopedia[$index] = $data_pendapatan_tokopedia[$index] + $data->total;
+						foreach ($price_marketplace as $key => $price) {
+							if($data->id_barang == $price->id_barang && $data->id_marketplace == $price->id_marketplace){
+								$data_pendapatan_tokopedia[$index] = $data_pendapatan_tokopedia[$index] + ($data->jumlah * $price->harga);
+							}
+						}
 					}
 					$data_bulan[$i] = $bulan[$i];
 				}
@@ -214,7 +237,11 @@ class Dashboard extends Admin_Controller {
 				
 				for ($index=1; $index <= count($bulan); $index++) { 
 					if($bulan[$month[$i]] == $data_bulan[$index]){
-						$data_pendapatan_lazada[$index] = $data_pendapatan_lazada[$index] + $data->total;
+						foreach ($price_marketplace as $key => $price) {
+							if($data->id_barang == $price->id_barang && $data->id_marketplace == $price->id_marketplace){
+								$data_pendapatan_lazada[$index] = $data_pendapatan_lazada[$index] + ($data->jumlah * $price->harga);
+							}
+						}
 					}
 					$data_bulan[$i] = $bulan[$i];
 				}

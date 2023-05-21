@@ -57,7 +57,7 @@
 			</div>
 		</div>
 	</div>
-	<div class="row data-barang-keluar <?php if($this->data['users_groups']->id == 1){ echo "d-none"; } ?>">">
+	<div class="row data-barang-keluar <?php if($this->data['users_groups']->id == 1){ echo "d-none"; } ?>">
 		<div class="card col-12 mb-3">
 			<div class="card-header">
 				<div class="row">

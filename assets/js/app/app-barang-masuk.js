@@ -116,7 +116,6 @@ define([
                         { "data": "barang_name" },
                         { "data": "koli_name" },
                         { "data": "ukuran" },
-                        { "data": "status_ukuran" },
                         { "data": "warna_name" },
                         { "data": "jumlah_koli" },
                         { "data": "jumlah_barang" },
@@ -158,7 +157,6 @@ define([
                     var data_column = [
                         { "data": "barang_name" },
                         { "data": "ukuran" },
-                        { "data": "status_ukuran" },
                         { "data": "warna_name" },
                         { "data": "jumlah_barang" },
                         { "data": "tanggal" },
@@ -275,17 +273,7 @@ define([
             })
         },
         changeUkuran : function() {
-            $('#status_ukuran').on('change', function () {
-                var status_ukuran = $(this)
-                status_ukuran.val(status_ukuran.prop('checked'));
-                if(status_ukuran.val() == 'true'){
-                    console.log('true')
-                    $('.ukuran-2').removeClass('d-none')
-                }else{
-                    console.log('false')
-                    $('.ukuran-2').addClass('d-none')
-                }
-            })
+          
         },
         addBarang : function(){
             var i = 1;
@@ -298,6 +286,7 @@ define([
                 }).done(function( msg ) {
                     i++;
                     var data = JSON.parse(msg);
+                    console.log(data);
                     var data_barang = data.data.barang;
                     var data_gudang = data.data.gudang;
                     var data_koli = data.data.koli;
@@ -311,7 +300,7 @@ define([
                             <input type="text" class="form-control" name="nama_barang[]" value="${data_barang[0].barang_name}" readonly>
                         </div>
                     </div>
-                    <div class="col-md-3 warna_${i}">
+                    <div class="col-md-2 warna_${i}">
                         <div class="form-group">
                             <label for="">Warna</label>
                             <select name="id_warna[]" id="id_warna_${i}" class="form-control select_warna">
@@ -319,7 +308,7 @@ define([
                             </select>
                         </div>
                     </div>
-                    <div class="col-md-3 ukuran_${i}">
+                    <div class="col-md-2 ukuran_${i}">
                         <div class="form-group">
                             <label for="">Ukuran</label>
                             <select name="ukuran[]" id="ukuran_${i}" class="form-control select_ukuran">
@@ -344,7 +333,7 @@ define([
                     if(role == 1){
                         html += `<div class="col-md-2">`;
                     }else{
-                        html += `<div class="col-md-3">`;
+                        html += `<div class="col-md-2">`;
                     }
                         html += `<div class="form-group">
                             <label for="">Koli</label>
@@ -360,31 +349,9 @@ define([
                     </div>
                     <div class="col-md-3">
                         <div class="form-group">
-                            <label for="">Jumlah Koli 1 Ukuran</label>
+                            <label for="">Jumlah Koli</label>
                             <div class="row">
-                                <input type="number" class="form-control col-md-12" name="jumlah[]" id="jumlah_${i}" placeholder="Jumlah Koli 1 Ukuran">
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-md-3">
-                        <div class="form-check text-center mt-4">
-                            <input class="form-check-input" type="checkbox" id="status_ukuran_${i}" name="status_ukuran[]">
-                            <label class="form-check-label">2 Ukuran?</label>
-                        </div>
-                    </div>
-                    <div class="col-md-3 ukuran-2_${i} d-none">
-                        <div class="form-group">
-                            <label for="">Ukuran</label>
-                            <select name="ukuran2[]" id="ukuran2_${i}" class="form-control select_ukuran">
-                                <option value="">Pilih Ukuran</option>
-                            </select>
-                        </div>
-                    </div>
-                    <div class="col-md-3 jumlah_koli_${i} d-none">
-                        <div class="form-group">
-                            <label for="">Jumlah Koli 2 Ukuran</label>
-                            <div class="row">
-                                <input type="number" class="form-control col-md-12" name="jumlah_koli[]" id="jumlah_koli_${i}" placeholder="Jumlah Koli 2 Ukuran">
+                                <input type="number" class="form-control col-md-12" name="jumlah[]" id="jumlah_${i}" placeholder="Jumlah Koli">
                             </div>
                         </div>
                     </div>
@@ -398,7 +365,6 @@ define([
                     </div>
                 </div>
                 `;
-                $('#status_ukuran_'+i).prop('checked',false);
                     $(".data-barang").append(html);
                     if(role == 1){
                         $('#id_gudang_'+i).select2({
@@ -417,7 +383,7 @@ define([
                             url: App.baseUrl+'barang_masuk/getDataWarna',
                             data : {id_barang : id_barang}
                         }).done(function( data ) {
-                            var data = JSON.parse(data);
+                        var data = JSON.parse(data);
                             var data_warna = data.data.warna;
                             var html = `
                                 <div class="form-group">
@@ -499,17 +465,6 @@ define([
                         });
                     })
                     $('#id_barang_'+i).trigger('change');
-                    $('#status_ukuran_'+i).on('change', function () {
-                        var status_ukuran = $(this)
-                        status_ukuran.val(status_ukuran.prop('checked'));
-                        if(status_ukuran.val() == 'true'){
-                            $('.ukuran-2_'+i).removeClass('d-none')
-                            $('.jumlah_koli_'+i).removeClass('d-none')
-                        }else{
-                            $('.ukuran-2_'+i).addClass('d-none')
-                            $('.jumlah_koli_'+i).addClass('d-none')
-                        }
-                    })
                 });
             });
       
@@ -531,7 +486,6 @@ define([
                         { "data": "barang_name" },
                         { "data": "koli_name" },
                         { "data": "ukuran" },
-                        { "data": "status_ukuran" },
                         { "data": "warna_name" },
                         { "data": "jumlah_koli" },
                         { "data": "jumlah_barang" },
@@ -541,7 +495,6 @@ define([
                     var data_column = [
                         { "data": "barang_name" },
                         { "data": "ukuran" },
-                        { "data": "status_ukuran" },
                         { "data": "warna_name" },
                         { "data": "jumlah_barang" },
                         { "data": "tanggal" },

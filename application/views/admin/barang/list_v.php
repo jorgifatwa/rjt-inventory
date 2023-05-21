@@ -39,7 +39,7 @@
 							<th>Harga Jual Flash Sale</th>
 							<th>Harga Jual Bottom</th>
 							<th>Deskripsi</th>
-							<th>Action</th>
+							<th width="25%">Action</th>
 						</tr>
 					</thead>
 					<tbody>

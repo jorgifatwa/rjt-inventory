@@ -22,10 +22,10 @@
                 <div class="card-body">
                     <div class="row">
                         <div class="col-md-8">
-                            <div class="form-group row">
+                        <div class="form-group row">
                                 <label class="form-label col-sm-3" for="">Nama Barang</label>
                                 <div class="col-sm-9">
-                                    <input class="form-control" type="hidden" id="id" name="id" autocomplete="off" required placeholder="Nama Barang" value="<?php echo $id ?>">
+                                    <input type="hidden" name="kode_barang" value="<?php echo $kode_barang ?>">
                                     <input class="form-control" type="text" id="nama" name="nama" autocomplete="off" required placeholder="Nama Barang" value="<?php echo $nama ?>">
                                 </div>
                             </div>
@@ -38,13 +38,34 @@
                             <div class="form-group row">
                                 <label class="form-label col-sm-3" for="">Harga Jual Biasa</label>
                                 <div class="col-sm-9">
-                                    <input class="form-control" type="number" id="harga_jual_ biasa" name="harga_jual_biasa" autocomplete="off" required placeholder="Harga Jual Biasa" value="<?php echo $harga_jual_biasa ?>">
+                                    <input class="form-control" type="number" id="harga_jual_biasa" name="harga_jual_biasa" autocomplete="off" required placeholder="Harga Jual Biasa" value="<?php echo $harga_jual_biasa ?>">
+                                </div>
+                            </div>
+                            <?php foreach ($ppns as $key => $ppn) { ?>
+                                <div class="form-group row">
+                                    <label class="form-label col-sm-3" for="">Harga <?php echo $ppn->marketplace_name ?></label>
+                                    <div class="col-sm-9">
+                                        <input type="hidden" name="id_marketplace[]" value="<?php echo $ppn->id_marketplace ?>">
+                                        <input class="form-control" readonly="" type="number" id="harga_<?php echo $ppn->id ?>" name="harga_marketplace[]" autocomplete="off" required placeholder="Harga Marketplace" value="<?php echo $ppn->harga_marketplace ?>">
+                                    </div>
+                                </div>
+                            <?php } ?>                     
+                            <div class="form-group row">
+                                <label class="form-label col-sm-3" for="">Harga Jual Campaign</label>
+                                <div class="col-sm-9">
+                                    <input class="form-control" type="number" id="harga_jual_campaign" name="harga_jual_campaign" autocomplete="off" required placeholder="Harga Jual Campaign" <?php echo $ppn->harga_jual_campaign ?>>
                                 </div>
                             </div>
                             <div class="form-group row">
-                                <label class="form-label col-sm-3" for="">Harga Jual Grosir</label>
+                                <label class="form-label col-sm-3" for="">Harga Jual Flash Sale</label>
                                 <div class="col-sm-9">
-                                    <input class="form-control" type="number" id="harga_jual_grosir" name="harga_jual_grosir" autocomplete="off" required placeholder="Harga Jual Grosir" value="<?php echo $harga_jual_grosir ?>">
+                                    <input class="form-control" type="number" id="harga_jual_flash_sale" name="harga_jual_flash_sale" autocomplete="off" required placeholder="Harga Jual Flash Sale" value="<?php echo $ppn->harga_jual_flash_sale ?>">
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <label class="form-label col-sm-3" for="">Harga Jual Bottom</label>
+                                <div class="col-sm-9">
+                                    <input class="form-control" type="number" id="harga_jual_bottom" name="harga_jual_bottom" autocomplete="off" required placeholder="Harga Jual Bottom" value="<?php echo $ppn->harga_jual_bottom ?>">
                                 </div>
                             </div>
                             <div class="form-group row">

@@ -4,16 +4,16 @@ define([
     "datatables",
     "datatablesBootstrap",
     "jqvalidate",
-    "select2",
-    "toastr"
+    "toastr",
+    "select2"
     ], function (
     $,
     bootstrap,
     datatables,
     datatablesBootstrap,
     jqvalidate,
-    select2,
-    toastr
+    toastr,
+    select2
     ) {
     return {
         table:null,
@@ -23,29 +23,13 @@ define([
             App.initValidation();
             App.initConfirm();
             App.initEvent();
-            App.onChangeHargaJual();
             $(".loadingpage").hide();
         },
-        onChangeHargaJual : function(){
-            $('#harga_jual_biasa').keyup(function () {
-                var harga_jual_biasa = $(this).val();
-                $.ajax({
-                    method: "POST",
-                    url: App.baseUrl+'barang/getPPN',
-                }).done(function( data ) {
-                    var data = JSON.parse(data);
-                    for (let i = 0; i < data.data.length; i++) {
-                        var harga_marketplace = (harga_jual_biasa * data.data[i].ppn) / 100;
-                        var total = harga_jual_biasa - harga_marketplace;
-                        $('#harga_'+data.data[i].id).val(total);
-                    }
-                });
-            })
-        },
         initEvent : function(){
-        },
-        numberWithCommas : function(x) {
-            return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+            $('#id_marketplace').select2({
+                width: "100%",
+                placeholder: "Pilih Marketplace",
+            });
         },
         initTable : function(){
             App.table = $('#table').DataTable({
@@ -69,17 +53,13 @@ define([
                 "processing": true,
                 "serverSide": true,
                 "ajax":{
-                    "url": App.baseUrl+"barang/dataList",
+                    "url": App.baseUrl+"ppn/dataList",
                     "dataType": "json",
                     "type": "POST",
                 },
                 "columns": [
-                    { "data": "nama" },
-                    { "data": "harga_modal" },
-                    { "data": "harga_jual_biasa" },
-                    { "data": "harga_jual_campaign" },
-                    { "data": "harga_jual_flash_sale" },
-                    { "data": "harga_jual_bottom" },
+                    { "data": "marketplace_name" },
+                    { "data": "ppn" },
                     { "data": "description" },
                     { "data": "action" ,"orderable": false}
                 ]
@@ -90,43 +70,19 @@ define([
                 $("#save-btn").removeAttr("disabled");
                 $("#form").validate({
                     rules: {
-                        nama: {
+                        id_marketplace: {
                             required: true
                         },
-                        harga_modal: {
-                            required: true
-                        },
-                        harga_jual_biasa: {
-                            required: true
-                        },
-                        harga_jual_campaign: {
-                            required: true
-                        },
-                        harga_jual_flash_sale: {
-                            required: true
-                        },
-                        harga_jual_bottom: {
+                        ppn: {
                             required: true
                         },
                     },
                     messages: {
-                        nama: {
-                            required: "Nama Harus Di isi"
+                        id_marketplace: {
+                            required: "Marketplace Harus Diplih"
                         },
-                        harga_modal: {
-                            required: "Harga Modal Harus Di isi"
-                        },
-                        harga_jual_biasa: {
-                            required: "Harga Jual Biasa Harus Di isi"
-                        },
-                        harga_jual_campaign: {
-                            required: "Harga Jual Campaign Harus Di isi"
-                        },
-                        harga_jual_flash_sale: {
-                            required: "Harga Jual Flash Sale Harus Di isi"
-                        },
-                        harga_jual_bottom: {
-                            required: "Harga Jual Bottom Harus Di isi"
+                        ppn: {
+                            required: "Nama Harus Diisi"
                         },
                     },
                     debug:true,
@@ -163,7 +119,7 @@ define([
             $('#table tbody').on( 'click', '.delete', function () {
                 var url = $(this).attr("url");
                 console.log(url);
-                App.confirm("Apakah Anda Yakin Untuk Mengubah Ini?",function(){
+                App.confirm("Apakah anda yakin untuk mengubah ini?",function(){
                    $.ajax({
                       method: "GET",
                       url: url

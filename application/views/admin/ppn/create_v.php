@@ -2,13 +2,13 @@
   <div class="container-fluid">
     <div class="row mb-2">
       <div class="col-sm-6">
-        <h1 class="m-0">Koli Baru</h1>
-        <p class="m-0">Koli</p>
+        <h1 class="m-0">PPN Baru</h1>
+        <p class="m-0">PPN</p>
       </div><!-- /.col -->
       <div class="col-sm-6">
         <ol class="breadcrumb float-sm-right">
-          <li class="breadcrumb-item"><a href="<?php echo base_url() ?>koli"></i>Koli</a></li>
-          <li class="breadcrumb-item active">Koli Baru</li>
+          <li class="breadcrumb-item"><a href="<?php echo base_url() ?>ppn"></i>PPN</a></li>
+          <li class="breadcrumb-item active">PPN Baru</li>
         </ol>
       </div><!-- /.col -->
     </div><!-- /.row -->
@@ -18,18 +18,23 @@
 <section class="content">
     <div class="container-fluid">
         <div class="card">
-            <form id="form" method="post">
+            <form id="form" method="post" enctype="multipart/form-data">
                 <div class="card-body">
-                    <div class="form-group row">
-                        <label class="form-label col-sm-3" for="">Nama Koli</label>
+                  <div class="form-group row">
+                        <label class="form-label col-sm-3" for="">Marketplace</label>
                         <div class="col-sm-4">
-                            <input class="form-control" type="text" id="name" name="name" autocomplete="off" placeholder="Nama Koli">
+                            <select name="id_marketplace" id="id_marketplace" class="form-control">
+                              <option value="">Pilih Marketplace</option>
+                              <?php  foreach ($marketplaces as $marketplace) { ?>
+                                <option value="<?php echo $marketplace->id ?>"><?php echo $marketplace->nama ?></option>
+                              <?php } ?>
+                            </select>
                         </div>
                     </div>
                     <div class="form-group row">
-                        <label class="form-label col-sm-3" for="">Jumlah</label>
+                        <label class="form-label col-sm-3" for="">PPN</label>
                         <div class="col-sm-4">
-                            <input class="form-control" type="number" id="jumlah" name="jumlah" autocomplete="off" placeholder="Jumlah">
+                            <input class="form-control" type="number" id="ppn" name="ppn" autocomplete="off" placeholder="PPN">
                         </div>
                     </div>
                     <div class="form-group row">
@@ -42,7 +47,7 @@
                 <div class="card-footer">
                     <div class="row">
                         <div class="col-sm-12 text-right">
-                            <a href="<?php echo base_url() ?>koli" class="btn btn-danger">Batal</a>
+                            <a href="<?php echo base_url() ?>gudang" class="btn btn-danger">Batal</a>
                             <button type="submit" class="btn btn-primary">Simpan</button>
                         </div>
                     </div>
@@ -53,4 +58,4 @@
 </section>
 
 
-<script data-main="<?php echo base_url() ?>assets/js/main/main-koli" src="<?php echo base_url() ?>assets/js/require.js"></script>
+<script data-main="<?php echo base_url() ?>assets/js/main/main-ppn" src="<?php echo base_url() ?>assets/js/require.js"></script>

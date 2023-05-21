@@ -21,7 +21,8 @@ class Stock_gudang_model extends CI_Model
     }
     
     public function getAllById($where = array()){
-        $this->db->select("stock_gudang.*, warna.nama as warna_name")->from("stock_gudang");  
+        $this->db->select("stock_gudang.*, warna.nama as warna_name, barang.*")->from("stock_gudang");  
+        $this->db->join("barang", "barang.id = stock_gudang.id_barang");
         $this->db->join("warna", "warna.id = stock_gudang.id_warna");
 
         $this->db->where($where);  

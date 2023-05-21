@@ -71,7 +71,7 @@ class Barang_keluar_model extends CI_Model
     }
 
     public function getTotalKotor($where = array()){
-        $this->db->select("barang_keluar.*, barang.harga_jual_biasa as harga_jual_biasa")->from("barang_keluar");
+        $this->db->select("barang_keluar.*, barang.harga_modal as harga_modal")->from("barang_keluar");
         $this->db->join("barang", "barang.id = barang_keluar.id_barang");
         $this->db->where($where);  
         $this->db->where("barang_keluar.is_deleted",0);  
@@ -176,8 +176,7 @@ class Barang_keluar_model extends CI_Model
 
     function getAllGrafik(){
         $year = date('Y');
-        $this->db->select("barang_keluar.*, (barang.harga_jual_biasa * barang_keluar.jumlah) as total")->from("barang_keluar");  
-        $this->db->join("barang", "barang.id = barang_keluar.id_barang");
+        $this->db->select("barang_keluar.*")->from("barang_keluar");  
         $this->db->where('YEAR(tanggal)', $year);
         $this->db->where('id_gudang', null);
         // $this->db->group_by('MONTH(tanggal)');  
@@ -190,7 +189,7 @@ class Barang_keluar_model extends CI_Model
 
     function getGrafikPendapatanShopee(){
         $year = date('Y');
-        $this->db->select("barang_keluar.*, (barang.harga_jual_biasa * barang_keluar.jumlah) as total")->from("barang_keluar");  
+        $this->db->select("barang_keluar.*")->from("barang_keluar");  
         $this->db->join("barang", "barang.id = barang_keluar.id_barang");
         $this->db->where('YEAR(tanggal)', $year);
         $this->db->where('id_gudang', null);
@@ -205,7 +204,7 @@ class Barang_keluar_model extends CI_Model
 
     function getGrafikPendapatanTokopedia(){
         $year = date('Y');
-        $this->db->select("barang_keluar.*, (barang.harga_jual_biasa * barang_keluar.jumlah) as total")->from("barang_keluar");  
+        $this->db->select("barang_keluar.*")->from("barang_keluar");  
         $this->db->join("barang", "barang.id = barang_keluar.id_barang");
         $this->db->where('YEAR(tanggal)', $year);
         $this->db->where('id_gudang', null);
@@ -220,7 +219,7 @@ class Barang_keluar_model extends CI_Model
 
     function getGrafikPendapatanTiktok(){
         $year = date('Y');
-        $this->db->select("barang_keluar.*, (barang.harga_jual_biasa * barang_keluar.jumlah) as total")->from("barang_keluar");  
+        $this->db->select("barang_keluar.*")->from("barang_keluar");  
         $this->db->join("barang", "barang.id = barang_keluar.id_barang");
         $this->db->where('YEAR(tanggal)', $year);
         $this->db->where('id_gudang', null);
@@ -235,7 +234,7 @@ class Barang_keluar_model extends CI_Model
 
     function getGrafikPendapatanLazada(){
         $year = date('Y');
-        $this->db->select("barang_keluar.*, (barang.harga_jual_biasa * barang_keluar.jumlah) as total")->from("barang_keluar");  
+        $this->db->select("barang_keluar.*")->from("barang_keluar");  
         $this->db->join("barang", "barang.id = barang_keluar.id_barang");
         $this->db->where('YEAR(tanggal)', $year);
         $this->db->where('id_gudang', null);

@@ -7,6 +7,8 @@ class Barang extends Admin_Controller
 	{
 		parent::__construct();
 		$this->load->model('barang_model');
+		$this->load->model('ppn_model');
+		$this->load->model('price_marketplace_model');
 	}
 
 	public function index() 
@@ -32,7 +34,6 @@ class Barang extends Admin_Controller
 
 		if ($this->form_validation->run() === TRUE) {
 			
-
 			$data = array(
 				'kode_barang' => $this->input->post('kode_barang'),
 				'nama' => $this->input->post('nama'),
@@ -46,7 +47,22 @@ class Barang extends Admin_Controller
 				'created_by' => $this->data['users']->id
 			);
 
-			if ($this->barang_model->insert($data)) {
+
+			$insert = $this->barang_model->insert($data);
+
+			for ($i=0; $i < count($_POST['harga_marketplace']); $i++) { 
+				$data_price = array(
+					'id_barang' => $insert,
+					'id_marketplace' => $_POST['id_marketplace'][$i],
+					'harga' => $_POST['harga_marketplace'][$i],
+					'created_at' => date('Y-m-d H:i:s'),
+					'created_by' => $this->data['users']->id
+				);
+
+				$this->price_marketplace_model->insert($data_price);
+			}
+
+			if ($insert) {
 				$this->session->set_flashdata('message', "barang Baru Berhasil Disimpan");
 				redirect("barang");
 			} else {
@@ -59,8 +75,9 @@ class Barang extends Admin_Controller
 			$nourut = substr($dariDB, 2, 4);
 			$kode_barang = $nourut + 1;
 
-			$this->data['kode_barang'] = 'B00'.$kode_barang;
+			$this->data['kode_barang'] = 'B0'.$kode_barang;
 			$this->data['content'] = 'admin/barang/create_v';
+			$this->data['ppns'] = $this->ppn_model->getAllById();
 			$this->load->view('admin/layouts/page', $this->data);
 		}
 	}
@@ -93,6 +110,19 @@ class Barang extends Admin_Controller
 			$id = $this->input->post('id');
 
 			$update = $this->barang_model->update($data, array("barang.id" => $id));
+
+			for ($i=0; $i < count($_POST['harga']); $i++) { 
+				$data_price = array(
+					'id_barang' => $id,
+					'id_marketplace' => $_POST['id_marketplace'][$i],
+					'harga' => $_POST['harga'][$i],
+					'updated_at' => date('Y-m-d H:i:s'),
+					'updated_by' => $this->data['users']->id
+				);
+
+				$this->price_marketplace_model->update($data_price, array('id_barang' => $id, 'id_marketplace' => $_POST['id_marketplace'][$i]));
+			}
+
 			if ($update) {
 				$this->session->set_flashdata('message', "barang Berhasil Diubah");
 				redirect("barang", "refresh");
@@ -116,11 +146,29 @@ class Barang extends Admin_Controller
 				$this->data['harga_jual_flash_sale'] = (!empty($barang)) ? $barang[0]->harga_jual_flash_sale : "";
 				$this->data['harga_jual_bottom'] = (!empty($barang)) ? $barang[0]->harga_jual_bottom : "";
 				$this->data['description'] = (!empty($barang)) ? $barang[0]->description : "";
+				$this->data['ppns'] = $this->ppn_model->getAllByIdWithMarketplace(array('id_barang' => $this->data['id']));
 				$this->data['content'] = 'admin/barang/edit_v';
 				$this->load->view('admin/layouts/page', $this->data);
 			}
 		}
 
+	}
+
+	public function detail() 
+	{
+		$this->data['id'] = $this->uri->segment(3);
+		$barang = $this->barang_model->getAllById(array("barang.id" => $this->data['id']));
+		$this->data['nama'] 	= (!empty($barang)) ? $barang[0]->nama : "";
+		$this->data['kode_barang'] 	= (!empty($barang)) ? $barang[0]->kode_barang : "";
+		$this->data['harga_modal'] = (!empty($barang)) ? $barang[0]->harga_modal : "";
+		$this->data['harga_jual_biasa'] = (!empty($barang)) ? $barang[0]->harga_jual_biasa : "";
+		$this->data['harga_jual_campaign'] = (!empty($barang)) ? $barang[0]->harga_jual_campaign : "";
+		$this->data['harga_jual_flash_sale'] = (!empty($barang)) ? $barang[0]->harga_jual_flash_sale : "";
+		$this->data['harga_jual_bottom'] = (!empty($barang)) ? $barang[0]->harga_jual_bottom : "";
+		$this->data['description'] = (!empty($barang)) ? $barang[0]->description : "";
+		$this->data['content'] = 'admin/barang/detail_v';
+		$this->data['ppns'] = $this->ppn_model->getAllByIdWithMarketplace(array('id_barang' => $this->data['id']));
+		$this->load->view('admin/layouts/page', $this->data);
 	}
 
 	public function dataList() 
@@ -169,10 +217,12 @@ class Barang extends Admin_Controller
 			foreach ($datas as $key => $data) {
 
 				$edit_url = "";
+				$detail_url = "";
 				$delete_url = "";
 
 				if ($this->data['is_can_edit'] && $data->is_deleted == 0) {
 					$edit_url = "<a href='" . base_url() . "barang/edit/" . $data->id . "' class='btn btn-sm btn-info white'> Ubah</a>";
+					$detail_url = "<a href='" . base_url() . "barang/detail/" . $data->id . "' class='btn btn-sm btn-primary white'> Detail</a>";
 				}
 				if ($this->data['is_can_delete']) {
 					$delete_url = "<a href='#'
@@ -192,7 +242,7 @@ class Barang extends Admin_Controller
 				$nestedData['harga_jual_flash_sale'] = "Rp. ".number_format($data->harga_jual_flash_sale);
 				$nestedData['harga_jual_bottom'] = "Rp. ".number_format($data->harga_jual_bottom);
 				$nestedData['description'] = substr(strip_tags($data->description), 0, 50);
-				$nestedData['action'] = $download_url." ".$edit_url . " " . $delete_url;
+				$nestedData['action'] = $download_url." ".$detail_url." ".$edit_url . " " . $delete_url;
 				$new_data[] = $nestedData;
 			}
 		}
@@ -241,5 +291,23 @@ class Barang extends Admin_Controller
 		$file = "data:image/png;base64," . base64_encode($generator->getBarcode('12341234', $generator::TYPE_CODE_128));
 		echo '<a href="'.$file.'" download>asdf</a>';
 	}
+
+	public function getPpn()
+	{
+		$ppn = $this->ppn_model->getAllById();
+
+		if(!empty($ppn)){	
+            $response_data['status'] = true;
+            $response_data['data'] = $ppn;
+            $response_data['message'] = 'Berhasil Mengambil Data';
+        }else{
+            $response_data['status'] = false;
+            $response_data['data'] = [];
+            $response_data['message'] = 'Gagal Mengambil Data';
+        }
+
+        echo json_encode($response_data);
+	}
+
 	
 }

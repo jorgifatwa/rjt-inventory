@@ -88,7 +88,6 @@
 										<th>Koli</th>
 										<?php } ?>
 										<th>Ukuran</th>
-										<th>Status Ukuran</th>
 										<th>Warna</th>
 										<?php if($this->data['users_groups']->id == 2){ ?>
 										<th>Jumlah Koli</th>
@@ -117,7 +116,6 @@
 										<th>Nama Barang</th>
 										<th>Koli</th>
 										<th>Ukuran</th>
-										<th>Status Ukuran</th>
 										<th>Warna</th>
 										<th>Jumlah Koli</th>
 										<th>Jumlah Barang</th>
@@ -135,7 +133,6 @@
 									<tr>
 										<th>Nama Barang</th>
 										<th>Ukuran</th>
-										<th>Status Ukuran</th>
 										<th>Warna</th>
 										<th>Jumlah Barang</th>
 										<th>Tanggal</th>

@@ -36,30 +36,18 @@ class Barang_masuk extends Admin_Controller
 			for ($i=0; $i < count($this->input->post('jumlah')); $i++) { 
 				$koli = $this->koli_model->getOneBy(array('koli.id' => $_POST['id_koli'][$i]));
 				
-				if(!isset($_POST['status_ukuran'])){
-					$_POST['status_ukuran'][$i] = 'false';
-				}else if(!isset($_POST['status_ukuran'][$i])){
-					$_POST['status_ukuran'][$i] = 'false';
-				}
-
-				if($_POST['status_ukuran'][$i] == 'true'){
-					$total = ($_POST['jumlah'][$i] * $koli->jumlah) / 2;
-				}else{
-					$total = $_POST['jumlah'][$i] * $koli->jumlah;
-				}
-
-				
 				if($this->data['users_groups']->id == 2){
 					$_POST['id_gudang'] = 1;
 				}else if($this->data['users_groups']->id == 3){
 					$_POST['id_gudang'] = 2;
 				}
+
+				$total = $_POST['jumlah'][$i] * $koli->jumlah;
 				
 				$data = array(
 					'id_barang' => $_POST['id_barang'][$i],
 					'id_koli' => $_POST['id_koli'][$i],
 					'ukuran' => $_POST['ukuran'][$i],
-					'status_ukuran' => $_POST['status_ukuran'][$i],
 					'id_warna' => $_POST['id_warna'][$i],
 					'jumlah_koli' => $_POST['jumlah'][$i],
 					'jumlah_barang' => $total,
@@ -70,91 +58,38 @@ class Barang_masuk extends Admin_Controller
 				);
 
 				$insert = $this->barang_masuk_model->insert($data);
+				//UPDATE STOCK KESELURUHAN
+				$stock = $this->stock_model->getOneBy(array('id_barang' => $_POST['id_barang'][$i], 'id_warna' => $_POST['id_warna'][$i], 'ukuran' => $_POST['ukuran'][$i]));
+				
+				$total = $stock->stock + ($_POST['jumlah'][$i] * $koli->jumlah);
 
-				if($_POST['status_ukuran'][$i] == 'true'){
-					$data ['ukuran'] = $_POST['ukuran2'][$i];
-					
-					$insert = $this->barang_masuk_model->insert($data);
-	
-					//UPDATE STOK BARANG DENGAN UKURAN KE SATU
-					$stock = $this->stock_model->getOneBy(array('id_barang' => $_POST['id_barang'][$i], 'id_warna' => $_POST['id_warna'][$i], 'ukuran' => $_POST['ukuran'][$i]));
-					
-					$total = $stock->stock + (( $_POST['jumlah'][$i] *  $_POST['jumlah_koli'][$i]) / 2);
-	
-					$data_update = array(
-						'stock' => $total
-					);
+				$data_update = array(
+					'stock' => $total
+				);
 
-					$this->stock_model->update($data_update, array("id" => $stock->id));
+				$this->stock_model->update($data_update, array("id" => $stock->id));
+				
+				//UPDATE STOCK DI GUDANG
+				$stock = $this->stock_gudang_model->getOneBy(array('id_barang' => $_POST['id_barang'][$i], 'id_warna' => $_POST['id_warna'][$i], 'ukuran' => $_POST['ukuran'][$i], 'id_gudang' => $data['id_gudang']));
 
-					//UPDATE STOCK DI GUDANG
-					$stock = $this->stock_gudang_model->getOneBy(array('id_barang' => $_POST['id_barang'][$i], 'id_warna' => $_POST['id_warna'][$i], 'ukuran' => $_POST['ukuran'][$i], 'id_gudang' => $data['id_gudang']));
-
-					$total = $stock->stock + (($_POST['jumlah'][$i] * $_POST['jumlah_koli'][$i]) / 2);
-	
-					$data_update = array(
-						'stock' => $total
-					);
-
-					$this->stock_gudang_model->update($data_update, array("id" => $stock->id));
-					
-					//UPDATE STOK BARANG DENGAN UKURAN KE DUA
-					$stock = $this->stock_model->getOneBy(array('id_barang' => $_POST['id_barang'][$i], 'id_warna' => $_POST['id_warna'][$i], 'ukuran' => $_POST['ukuran2'][$i]));
-					
-					$total = $stock->stock + (($_POST['jumlah'][$i] * $_POST['jumlah_koli'][$i]) / 2);
-	
-					$data_update = array(
-						'stock' => $total
-					);
-	
-					$this->stock_model->update($data_update, array("id" => $stock->id));
-
-					//UPDATE STOCK DI GUDANG
-					$stock = $this->stock_gudang_model->getOneBy(array('id_barang' => $_POST['id_barang'][$i], 'id_warna' => $_POST['id_warna'][$i], 'ukuran' => $_POST['ukuran2'][$i], 'id_gudang' => $data['id_gudang']));
-					
-					$total = $stock->stock + (($_POST['jumlah'][$i] * $_POST['jumlah_koli'][$i]) / 2);
-	
-					$data_update = array(
-						'stock' => $total
-					);
-
-					$this->stock_gudang_model->update($data_update, array("id" => $stock->id));
-					
-				}else{	
-					//UPDATE STOCK KESELURUHAN
-					$stock = $this->stock_model->getOneBy(array('id_barang' => $_POST['id_barang'][$i], 'id_warna' => $_POST['id_warna'][$i], 'ukuran' => $_POST['ukuran'][$i]));
-					
+				
+				if($stock){
 					$total = $stock->stock + ($_POST['jumlah'][$i] * $koli->jumlah);
 	
 					$data_update = array(
 						'stock' => $total
 					);
-	
-					$this->stock_model->update($data_update, array("id" => $stock->id));
-					
-					//UPDATE STOCK DI GUDANG
-					$stock = $this->stock_gudang_model->getOneBy(array('id_barang' => $_POST['id_barang'][$i], 'id_warna' => $_POST['id_warna'][$i], 'ukuran' => $_POST['ukuran'][$i], 'id_gudang' => $data['id_gudang']));
+					$this->stock_gudang_model->update($data_update, array("id" => $stock->id));
+				}else{
+					$data_insert = array(
+						'id_barang' => $_POST['id_barang'][$i],
+						'id_warna' => $_POST['id_warna'][$i],
+						'ukuran' => $_POST['ukuran'][$i],
+						'id_gudang' => $_POST['id_gudang'],
+						'stock' => $_POST['jumlah'][$i] * $koli->jumlah
+					);
 
-					
-					if($stock){
-						$total = $stock->stock + ($_POST['jumlah'][$i] * $koli->jumlah);
-		
-						$data_update = array(
-							'stock' => $total
-						);
-						$this->stock_gudang_model->update($data_update, array("id" => $stock->id));
-					}else{
-						$data_insert = array(
-							'id_barang' => $_POST['id_barang'][$i],
-							'id_warna' => $_POST['id_warna'][$i],
-							'ukuran' => $_POST['ukuran'][$i],
-							'id_gudang' => $_POST['id_gudang'],
-							'stock' => $_POST['jumlah'][$i] * $koli->jumlah
-						);
-
-						$this->stock_gudang_model->insert($data_insert);
-					}
-
+					$this->stock_gudang_model->insert($data_insert);
 				}
 			}
 
@@ -238,11 +173,10 @@ class Barang_masuk extends Admin_Controller
 			2 => 'koli.nama',
 			3 => 'warna.nama',
 			4 => 'barang_masuk.ukuran',
-			5 => 'barang_masuk.status_ukuran',
-			6 => 'barang_masuk.jumlah_koli',
-			7 => 'barang_masuk.jumlah_barang',
-			8 => 'barang_masuk.tanggal',
-			9 => '',
+			5 => 'barang_masuk.jumlah_koli',
+			6 => 'barang_masuk.jumlah_barang',
+			7 => 'barang_masuk.tanggal',
+			8 => '',
 		);
 
 		$order = $columns[$this->input->post('order')[0]['column']];
@@ -278,7 +212,6 @@ class Barang_masuk extends Admin_Controller
 				"warna.nama" => $search_value,
 				"barang_masuk.ukuran" => $search_value,
 				"barang_masuk.jumlah_koli" => $search_value,
-				"barang_masuk.status_ukuran" => $search_value,
 				"barang_masuk.jumlah_barang" => $search_value,
 				"barang_masuk.tanggal" => $search_value,
 			);
@@ -317,11 +250,6 @@ class Barang_masuk extends Admin_Controller
 					$nestedData['jumlah_koli'] = $data->jumlah_koli;
 				}
 				$nestedData['ukuran'] = $data->ukuran;
-				if($data->status_ukuran == 'true'){
-					$nestedData['status_ukuran'] = 'Ada Dua';
-				}else{
-					$nestedData['status_ukuran'] = 'Ada Satu';
-				}
 				$nestedData['jumlah_barang'] = $data->jumlah_barang;
 				$nestedData['warna_name'] = $data->warna_name;
 				$nestedData['tanggal'] = $data->tanggal;

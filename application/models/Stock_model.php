@@ -35,7 +35,8 @@ class Stock_model extends CI_Model
     }
 
     public function getAllByIdNoGroupBy($where = array()){
-        $this->db->select("stock.*")->from("stock");
+        $this->db->select("stock.*, barang.*")->from("stock");
+        $this->db->join("barang", "barang.id = stock.id_barang");
         $this->db->where($where);  
         $this->db->where("stock.is_deleted",0);  
 
