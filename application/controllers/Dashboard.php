@@ -50,6 +50,7 @@ class Dashboard extends Admin_Controller {
 			}
 		}else{
 			$total_keluar = [];
+			$total_bersih = [];
 		}
 
 		$this->data['modal'] = array_sum($total);
