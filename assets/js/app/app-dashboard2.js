@@ -48,6 +48,19 @@ define([
                 }
             });
 
+            //grafik retur
+            $.ajax({
+                url : App.baseUrl+"dashboard/grafikRetur",
+                type : "GET",
+                success : function(data) {
+                    var data = JSON.parse(data);
+                    App.grafikRetur(data.grafik);
+                },
+                error : function(data) {
+                    // do something
+                }
+            });
+
             //grafik pendapatan marketplace
             $.ajax({
                 url : App.baseUrl+"dashboard/grafikPendapatanMarketplace",
@@ -147,6 +160,61 @@ define([
                 series: [{
                     name: data.tahun,
                     data: [data.pendapatan[1],data.pendapatan[2],data.pendapatan[3],data.pendapatan[4],data.pendapatan[5],data.pendapatan[6],data.pendapatan[7],data.pendapatan[8],data.pendapatan[9],data.pendapatan[10],data.pendapatan[11],data.pendapatan[12]],
+                    pointStart: 0,
+                }]
+            });
+        },
+
+        grafikRetur : function(data) {
+            console.log(data);
+            Highcharts.chart('container-grafik-retur', {
+                chart: {
+                    type: 'column'
+                },
+                title: {
+                    text: 'Barang Retur Perbulan'
+                },
+                subtitle: {
+                    text: 'RJT Inventory'
+                },
+
+                xAxis: {
+                    categories: [
+                        'Januari',
+                        'Februari',
+                        'Maret',
+                        'April',
+                        'Mei',
+                        'Juni',
+                        'Juli',
+                        'Agustus',
+                        'September',
+                        'Oktober',
+                        'November',
+                        'Desember'
+                    ],
+                    crosshair: true
+                },
+                yAxis: {
+                    min: 0,
+                    title: {
+                        text: 'Jumlah Barang Retur'
+                    }
+                },
+                plotOptions: {
+                    series: {
+                        allowPointSelect: true
+                    }
+                },
+            
+                tooltip: {
+                    headerFormat: '<b>{series.name}</b><br />',
+                    pointFormat: 'Retur = {point.y}'
+                },
+            
+                series: [{
+                    name: data.tahun,
+                    data: [data.retur[1],data.retur[2],data.retur[3],data.retur[4],data.retur[5],data.retur[6],data.retur[7],data.retur[8],data.retur[9],data.retur[10],data.retur[11],data.retur[12]],
                     pointStart: 0,
                 }]
             });

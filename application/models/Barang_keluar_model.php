@@ -187,6 +187,19 @@ class Barang_keluar_model extends CI_Model
         return FALSE;
     }
 
+    function getAllRetur(){
+        $year = date('Y');
+        $this->db->select("retur.*")->from("retur");  
+        $this->db->where('YEAR(created_at)', $year);
+        $this->db->where('is_deleted', 0);
+        // $this->db->group_by('MONTH(tanggal)');  
+        $query = $this->db->get();
+        if ($query->num_rows() >0){  
+            return $query->result(); 
+        } 
+        return FALSE;
+    }
+
     function getGrafikPendapatanShopee(){
         $year = date('Y');
         $this->db->select("barang_keluar.*")->from("barang_keluar");  

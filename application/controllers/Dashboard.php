@@ -131,6 +131,71 @@ class Dashboard extends Admin_Controller {
 		echo json_encode($return_data);
 	}
 
+	public function grafikRetur() {
+
+		$bulan = [
+			1 => 'Januari',
+			2 => 'Februari',
+			3 => 'Maret',
+			4 => 'April',
+			5 => 'Mei',
+			6 => 'Juni',
+			7 => 'Juli',
+			8 => 'Agustus',
+			9 => 'September',
+			10 => 'Oktober',
+			11 => 'November',
+			12 => 'Desember',
+		];
+
+		$datas = $this->barang_keluar_model->getAllRetur();
+		
+		$month = [];
+		$data_retur = [];
+		$data_bulan = [];
+
+		for ($i=1; $i <= count($bulan); $i++) { 
+			$data_retur[$i] = 0;
+			$data_bulan[$i] = $bulan[$i];
+		}
+		
+		$i = 1;
+		
+		if(!empty($datas)){
+			foreach ($datas as $key => $data) {
+				$month[$i] = (int)date("m",strtotime($data->created_at));
+				
+				for ($index=1; $index <= count($bulan); $index++) { 
+					if($bulan[$month[$i]] == $data_bulan[$index]){
+						$data_retur[$index] = $data_retur[$index] + $data->jumlah;
+					}
+					$data_bulan[$i] = $bulan[$i];
+				}
+				$i++;
+			}
+		}
+		
+		$data_grafik = [
+			"tahun" => date('Y'),
+			"category" => $data_bulan,
+			"retur" => $data_retur,
+		];
+
+		if (!empty($data_grafik)) {
+			// $return_data['data'] = $datas;
+			$return_data['grafik'] = $data_grafik;
+			$return_data['status'] = true;
+			$return_data['message'] = "Berhasil mengambil data!";
+		} else {
+			$return_data['data'] = [];
+			$return_data['grafik'] = [];
+			$return_data['status'] = false;
+			$return_data['message'] = "Gagal mengambil data!";
+		}
+
+		echo json_encode($return_data);
+	}
+
 	public function grafikPendapatanMarketplace() {
 
 		$bulan = [
