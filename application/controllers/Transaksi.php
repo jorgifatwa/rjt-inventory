@@ -190,7 +190,7 @@ class Transaksi extends Admin_Controller
 
 				$update = $this->barang_keluar_model->update($data_update, array("id" => $barang_keluar[0]->barang_keluar_id));
 				
-				$barang = $this->stock_gudang_model->getOneBy(array('id_barang' => $barang_keluar->id_barang, 'ukuran' => $barang_keluar->ukuran, 'id_warna' => $barang_keluar->id_warna, 'id_gudang' => 2));
+				$barang = $this->stock_gudang_model->getOneBy(array('id_barang' => $barang_keluar[0]->id_barang, 'ukuran' =>  $barang_keluar[0]->ukuran, 'id_warna' =>  $barang_keluar[0]->id_warna, 'id_gudang' => 2));
 	
 				$total = $barang->stock + $this->input->post('jumlah');
 	
