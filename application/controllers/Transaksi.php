@@ -8,6 +8,7 @@ class Transaksi extends Admin_Controller
 		parent::__construct();
 		$this->load->model('transaksi_model');
 		$this->load->model('barang_keluar_model');
+		$this->load->model('stock_gudang_model');
 	}
 
 	public function index() 
