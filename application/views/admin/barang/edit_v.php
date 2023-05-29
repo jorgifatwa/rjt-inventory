@@ -25,6 +25,7 @@
                         <div class="form-group row">
                                 <label class="form-label col-sm-3" for="">Nama Barang</label>
                                 <div class="col-sm-9">
+                                    <input type="hidden" name="id" value="<?php echo $id ?>">
                                     <input type="hidden" name="kode_barang" value="<?php echo $kode_barang ?>">
                                     <input class="form-control" type="text" id="nama" name="nama" autocomplete="off" required placeholder="Nama Barang" value="<?php echo $nama ?>">
                                 </div>
@@ -53,7 +54,7 @@
                             <div class="form-group row">
                                 <label class="form-label col-sm-3" for="">Harga Jual Campaign</label>
                                 <div class="col-sm-9">
-                                    <input class="form-control" type="number" id="harga_jual_campaign" name="harga_jual_campaign" autocomplete="off" required placeholder="Harga Jual Campaign" <?php echo $harga_jual_campaign ?>>
+                                    <input class="form-control" type="number" id="harga_jual_campaign" name="harga_jual_campaign" autocomplete="off" required placeholder="Harga Jual Campaign" value="<?php echo $harga_jual_campaign ?>">
                                 </div>
                             </div>
                             <div class="form-group row">

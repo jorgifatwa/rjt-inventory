@@ -119,11 +119,11 @@ class Barang extends Admin_Controller
 
 			$update = $this->barang_model->update($data, array("barang.id" => $id));
 
-			for ($i=0; $i < count($_POST['harga']); $i++) { 
+			for ($i=0; $i < count($_POST['harga_marketplace']); $i++) { 
 				$data_price = array(
 					'id_barang' => $id,
 					'id_marketplace' => $_POST['id_marketplace'][$i],
-					'harga' => $_POST['harga'][$i],
+					'harga' => $_POST['harga_marketplace'][$i],
 					'updated_at' => date('Y-m-d H:i:s'),
 					'updated_by' => $this->data['users']->id
 				);
@@ -147,6 +147,7 @@ class Barang extends Admin_Controller
 				$this->data['id'] = $this->uri->segment(3);
 				$barang = $this->barang_model->getAllById(array("barang.id" => $this->data['id']));
 				
+				$this->data['id'] 	= (!empty($barang)) ? $barang[0]->id : "";
 				$this->data['nama'] 	= (!empty($barang)) ? $barang[0]->nama : "";
 				$this->data['kode_barang'] 	= (!empty($barang)) ? $barang[0]->kode_barang : "";
 				$this->data['harga_modal'] = (!empty($barang)) ? $barang[0]->harga_modal : "";
