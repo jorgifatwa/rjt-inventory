@@ -53,19 +53,19 @@
                             <div class="form-group row">
                                 <label class="form-label col-sm-3" for="">Harga Jual Campaign</label>
                                 <div class="col-sm-9">
-                                    <input class="form-control" type="number" id="harga_jual_campaign" name="harga_jual_campaign" autocomplete="off" required placeholder="Harga Jual Campaign" <?php echo $ppn->harga_jual_campaign ?>>
+                                    <input class="form-control" type="number" id="harga_jual_campaign" name="harga_jual_campaign" autocomplete="off" required placeholder="Harga Jual Campaign" <?php echo $harga_jual_campaign ?>>
                                 </div>
                             </div>
                             <div class="form-group row">
                                 <label class="form-label col-sm-3" for="">Harga Jual Flash Sale</label>
                                 <div class="col-sm-9">
-                                    <input class="form-control" type="number" id="harga_jual_flash_sale" name="harga_jual_flash_sale" autocomplete="off" required placeholder="Harga Jual Flash Sale" value="<?php echo $ppn->harga_jual_flash_sale ?>">
+                                    <input class="form-control" type="number" id="harga_jual_flash_sale" name="harga_jual_flash_sale" autocomplete="off" required placeholder="Harga Jual Flash Sale" value="<?php echo $harga_jual_flash_sale ?>">
                                 </div>
                             </div>
                             <div class="form-group row">
                                 <label class="form-label col-sm-3" for="">Harga Jual Bottom</label>
                                 <div class="col-sm-9">
-                                    <input class="form-control" type="number" id="harga_jual_bottom" name="harga_jual_bottom" autocomplete="off" required placeholder="Harga Jual Bottom" value="<?php echo $ppn->harga_jual_bottom ?>">
+                                    <input class="form-control" type="number" id="harga_jual_bottom" name="harga_jual_bottom" autocomplete="off" required placeholder="Harga Jual Bottom" value="<?php echo $harga_jual_bottom ?>">
                                 </div>
                             </div>
                             <div class="form-group row">

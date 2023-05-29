@@ -138,6 +138,7 @@ class Barang extends Admin_Controller
 			} else {
 				$this->data['id'] = $this->uri->segment(3);
 				$barang = $this->barang_model->getAllById(array("barang.id" => $this->data['id']));
+				
 				$this->data['nama'] 	= (!empty($barang)) ? $barang[0]->nama : "";
 				$this->data['kode_barang'] 	= (!empty($barang)) ? $barang[0]->kode_barang : "";
 				$this->data['harga_modal'] = (!empty($barang)) ? $barang[0]->harga_modal : "";
