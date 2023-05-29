@@ -71,11 +71,19 @@ class Barang extends Admin_Controller
 			}
 		} else {
 			$dariDB = $this->barang_model->cekKodeBarang();
-
+			
 			$nourut = substr($dariDB, 2, 4);
+			
 			$kode_barang = $nourut + 1;
+			
+			if($dariDB == 'B009' || $nourut >= 10){
+				$this->data['kode_barang'] = 'B0'.$kode_barang;
+			}elseif ($dariDB == 'B099' || $nourut >= 100) {
+				$this->data['kode_barang'] = 'B'.$kode_barang;
+			}else{
+				$this->data['kode_barang'] = 'B00'.$kode_barang;
+			}
 
-			$this->data['kode_barang'] = 'B0'.$kode_barang;
 			$this->data['content'] = 'admin/barang/create_v';
 			$this->data['ppns'] = $this->ppn_model->getAllById();
 			$this->load->view('admin/layouts/page', $this->data);
