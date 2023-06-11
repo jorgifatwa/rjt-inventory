@@ -42,14 +42,26 @@
                                     <input class="form-control" type="number" id="harga_jual_biasa" name="harga_jual_biasa" autocomplete="off" required placeholder="Harga Jual Biasa" value="<?php echo $harga_jual_biasa ?>">
                                 </div>
                             </div>
-                            <?php foreach ($ppns as $key => $ppn) { ?>
-                                <div class="form-group row">
-                                    <label class="form-label col-sm-3" for="">Harga <?php echo $ppn->marketplace_name ?></label>
-                                    <div class="col-sm-9">
-                                        <input type="hidden" name="id_marketplace[]" value="<?php echo $ppn->id_marketplace ?>">
-                                        <input class="form-control" readonly="" type="number" id="harga_<?php echo $ppn->id ?>" name="harga_marketplace[]" autocomplete="off" required placeholder="Harga Marketplace" value="<?php echo $ppn->harga_marketplace ?>">
+                            <?php if(!empty($ppns)){ ?>
+                                <?php foreach ($ppns as $key => $ppn) { ?>
+                                    <div class="form-group row">
+                                        <label class="form-label col-sm-3" for="">Harga <?php echo $ppn->marketplace_name ?></label>
+                                        <div class="col-sm-9">
+                                            <input type="hidden" name="id_marketplace[]" value="<?php echo $ppn->id_marketplace ?>">
+                                            <input class="form-control" readonly="" type="number" id="harga_<?php echo $ppn->id ?>" name="harga_marketplace[]" autocomplete="off" required placeholder="Harga Marketplace" value="<?php echo $ppn->harga_marketplace ?>">
+                                        </div>
                                     </div>
-                                </div>
+                                <?php } ?>                     
+                            <?php }else{ ?>
+                                <?php foreach ($ppn_oris as $key => $ppn) { ?>
+                                    <div class="form-group row">
+                                        <label class="form-label col-sm-3" for="">Harga <?php echo $ppn->marketplace_name ?></label>
+                                        <div class="col-sm-9">
+                                            <input type="hidden" name="id_marketplace[]" value="<?php echo $ppn->id_marketplace ?>">
+                                            <input class="form-control" readonly="" type="number" id="harga_<?php echo $ppn->id ?>" name="harga_marketplace[]" autocomplete="off" required placeholder="Harga Marketplace" value="">
+                                        </div>
+                                    </div>
+                                <?php } ?>      
                             <?php } ?>                     
                             <div class="form-group row">
                                 <label class="form-label col-sm-3" for="">Harga Jual Campaign</label>

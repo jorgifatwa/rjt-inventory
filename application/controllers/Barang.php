@@ -157,6 +157,7 @@ class Barang extends Admin_Controller
 				$this->data['harga_jual_bottom'] = (!empty($barang)) ? $barang[0]->harga_jual_bottom : "";
 				$this->data['description'] = (!empty($barang)) ? $barang[0]->description : "";
 				$this->data['ppns'] = $this->ppn_model->getAllByIdWithMarketplace(array('id_barang' => $this->data['id']));
+				$this->data['ppn_oris'] = $this->ppn_model->getAllById();
 				$this->data['content'] = 'admin/barang/edit_v';
 				$this->load->view('admin/layouts/page', $this->data);
 			}
