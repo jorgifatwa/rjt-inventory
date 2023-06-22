@@ -40,15 +40,17 @@
                                     <p>: <?php echo "Rp. ".number_format($harga_jual_biasa) ?></p>
                                 </div>
                             </div>
-                            <?php foreach ($ppns as $key => $ppn) { ?>
-                                <div class="form-group row">
-                                    <label class="form-label col-sm-3" for="">Harga <?php echo $ppn->marketplace_name ?></label>
-                                    <div class="col-sm-9">
-                                        <input type="hidden" name="id_marketplace[]" value="<?php echo $ppn->id_marketplace ?>">
-                                        <p>: <?php echo "Rp. ".$ppn->harga_marketplace ?></p>
+                            <?php if(!empty($ppns)){ ?>
+                                <?php foreach ($ppns as $key => $ppn) { ?>
+                                    <div class="form-group row">
+                                        <label class="form-label col-sm-3" for="">Harga <?php echo $ppn->marketplace_name ?></label>
+                                        <div class="col-sm-9">
+                                            <input type="hidden" name="id_marketplace[]" value="<?php echo $ppn->id_marketplace ?>">
+                                            <p>: <?php echo "Rp. ".$ppn->harga_marketplace ?></p>
+                                        </div>
                                     </div>
-                                </div>
-                            <?php } ?>                     
+                                <?php } ?>                     
+                            <?php } ?> 
                             <div class="form-group row">
                                 <label class="form-label col-sm-3" for="">Harga Jual Campaign</label>
                                 <div class="col-sm-9">
