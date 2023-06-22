@@ -345,21 +345,27 @@ class Barang_masuk extends Admin_Controller
 	public function getData()
 	{
 		$barang = $this->barang_model->getOneBy(array('kode_barang'=> $this->input->post('kode_barang')));
-		$stock = $this->stock_model->getById(array('id_barang'=> $barang->id));
-		$gudang = $this->gudang_model->getAllById();
-		$koli = $this->koli_model->getAllById();
-
-		if(!empty($barang)){	
-            $response_data['status'] = true;
-            $response_data['data']['barang'] = $stock;
-            $response_data['data']['gudang'] = $gudang;
-            $response_data['data']['koli'] = $koli;
-            $response_data['message'] = 'Berhasil Mengambil Data';
-        }else{
-            $response_data['status'] = false;
-            $response_data['data'] = [];
-            $response_data['message'] = 'Gagal Mengambil Data';
-        }
+		if(!empty($barang)){
+			$stock = $this->stock_model->getById(array('id_barang'=> $barang->id));
+			$gudang = $this->gudang_model->getAllById();
+			$koli = $this->koli_model->getAllById();
+	
+			if(!empty($barang)){	
+				$response_data['status'] = true;
+				$response_data['data']['barang'] = $stock;
+				$response_data['data']['gudang'] = $gudang;
+				$response_data['data']['koli'] = $koli;
+				$response_data['message'] = 'Berhasil Mengambil Data';
+			}else{
+				$response_data['status'] = false;
+				$response_data['data'] = [];
+				$response_data['message'] = 'Gagal Mengambil Data';
+			}
+		}else{
+			$response_data['status'] = false;
+			$response_data['data'] = [];
+			$response_data['message'] = 'Gagal Mengambil Data';
+		}
 
         echo json_encode($response_data);
 	}

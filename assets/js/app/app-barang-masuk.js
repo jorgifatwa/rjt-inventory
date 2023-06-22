@@ -286,185 +286,188 @@ define([
                 }).done(function( msg ) {
                     i++;
                     var data = JSON.parse(msg);
-                    console.log(data);
-                    var data_barang = data.data.barang;
-                    var data_gudang = data.data.gudang;
-                    var data_koli = data.data.koli;
-                    var role = $('#role').val();
-
-                    var html = `<div class="row control-group col-12">
-                    <div class="col-md-3">
-                        <div class="form-group">
-                            <label for="">Nama Barang</label>
-                            <input type="hidden" class="form-control" name="id_barang[]" id="id_barang_${i}" value="${data_barang[0].id_barang}">
-                            <input type="text" class="form-control" name="nama_barang[]" value="${data_barang[0].barang_name}" readonly>
-                        </div>
-                    </div>
-                    <div class="col-md-2 warna_${i}">
-                        <div class="form-group">
-                            <label for="">Warna</label>
-                            <select name="id_warna[]" id="id_warna_${i}" class="form-control select_warna">
-                                <option value="">Pilih Warna</option>
-                            </select>
-                        </div>
-                    </div>
-                    <div class="col-md-2 ukuran_${i}">
-                        <div class="form-group">
-                            <label for="">Ukuran</label>
-                            <select name="ukuran[]" id="ukuran_${i}" class="form-control select_ukuran">
-                                <option value="">Pilih Ukuran</option>
-                            </select>
-                        </div>
-                    </div>`;
-                    if(role == 1){
-                        html += `<div class="col-md-2">
+                    if(data.status == true){
+                        var data_barang = data.data.barang;
+                        var data_gudang = data.data.gudang;
+                        var data_koli = data.data.koli;
+                        var role = $('#role').val();
+    
+                        var html = `<div class="row control-group col-12">
+                        <div class="col-md-3">
                             <div class="form-group">
-                                <label for="">Gudang</label>
-                                <select name="id_gudang[]" id="id_gudang_`+i+`" class="form-control select_gudang">`;
-                        var option = "";
-                        for (var index = 0; index < data_gudang.length; index++) {
-                                    option += "<option value="+data_gudang[index].id+"> "+data_gudang[index].nama+"</option>";
-                        }
-                        html += option;
-                        html += `</select>
+                                <label for="">Nama Barang</label>
+                                <input type="hidden" class="form-control" name="id_barang[]" id="id_barang_${i}" value="${data_barang[0].id_barang}">
+                                <input type="text" class="form-control" name="nama_barang[]" value="${data_barang[0].barang_name}" readonly>
+                            </div>
+                        </div>
+                        <div class="col-md-2 warna_${i}">
+                            <div class="form-group">
+                                <label for="">Warna</label>
+                                <select name="id_warna[]" id="id_warna_${i}" class="form-control select_warna">
+                                    <option value="">Pilih Warna</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-2 ukuran_${i}">
+                            <div class="form-group">
+                                <label for="">Ukuran</label>
+                                <select name="ukuran[]" id="ukuran_${i}" class="form-control select_ukuran">
+                                    <option value="">Pilih Ukuran</option>
+                                </select>
                             </div>
                         </div>`;
-                    }
-                    if(role == 1){
-                        html += `<div class="col-md-2">`;
-                    }else{
-                        html += `<div class="col-md-2">`;
-                    }
-                        html += `<div class="form-group">
-                            <label for="">Koli</label>
-                            <select name="id_koli[]" id="id_koli_`+i+`" class="form-control select_koli">
-                    `;
-                    var option = "";
-                    for (var index = 0; index < data_koli.length; index++) {
-                            option += "<option value="+data_koli[index].id+"> "+data_koli[index].nama+"</option>";
-                    }
-                    html += option;
-                    html += `</select>
-                        </div>
-                    </div>
-                    <div class="col-md-3">
-                        <div class="form-group">
-                            <label for="">Jumlah Koli</label>
-                            <div class="row">
-                                <input type="number" class="form-control col-md-12" name="jumlah[]" id="jumlah_${i}" placeholder="Jumlah Koli">
-                            </div>
-                        </div>
-                    </div>
-                    <div class="row col-12">
-                        <div class="col-md-12">
-                            <div class="form-group">
-                            <label for="">&nbsp;</label>
-                                <button type="button" class="btn btn-danger col-md-12 remove"><span class="fa fa-trash"></span></button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                `;
-                    $(".data-barang").append(html);
-                    if(role == 1){
-                        $('#id_gudang_'+i).select2({
-                            width: "100%",
-                            placeholder: "Pilih Gudang",
-                        });
-                    }
-                    $('#id_koli_'+i).select2({
-                        width: "100%",
-                        placeholder: "Pilih Koli",
-                    });
-                    $('#id_barang_'+i).on('change', function () {
-                        var id_barang = $(this).val();
-                        $.ajax({
-                            method: "POST",
-                            url: App.baseUrl+'barang_masuk/getDataWarna',
-                            data : {id_barang : id_barang}
-                        }).done(function( data ) {
-                        var data = JSON.parse(data);
-                            var data_warna = data.data.warna;
-                            var html = `
+                        if(role == 1){
+                            html += `<div class="col-md-2">
                                 <div class="form-group">
-                                    <label for="">Warna</label>
-                                    <select name="id_warna[]" id="id_warna_${i}" class="form-control select_warna">
-                            `;
+                                    <label for="">Gudang</label>
+                                    <select name="id_gudang[]" id="id_gudang_`+i+`" class="form-control select_gudang">`;
                             var option = "";
-                            for (var index = 0; index < data_warna.length; index++) {
-                                    option += "<option value="+data_warna[index].id_warna+"> "+data_warna[index].warna_name+"</option>";
+                            for (var index = 0; index < data_gudang.length; index++) {
+                                        option += "<option value="+data_gudang[index].id+"> "+data_gudang[index].nama+"</option>";
                             }
                             html += option;
                             html += `</select>
                                 </div>
-                            `;
-                            
-                            $('.warna_'+i).html(html);
-                            $('#id_warna_'+i).select2({
+                            </div>`;
+                        }
+                        if(role == 1){
+                            html += `<div class="col-md-2">`;
+                        }else{
+                            html += `<div class="col-md-2">`;
+                        }
+                            html += `<div class="form-group">
+                                <label for="">Koli</label>
+                                <select name="id_koli[]" id="id_koli_`+i+`" class="form-control select_koli">
+                        `;
+                        var option = "";
+                        for (var index = 0; index < data_koli.length; index++) {
+                                option += "<option value="+data_koli[index].id+"> "+data_koli[index].nama+"</option>";
+                        }
+                        html += option;
+                        html += `</select>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="form-group">
+                                <label for="">Jumlah Koli</label>
+                                <div class="row">
+                                    <input type="number" class="form-control col-md-12" name="jumlah[]" id="jumlah_${i}" placeholder="Jumlah Koli">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row col-12">
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                <label for="">&nbsp;</label>
+                                    <button type="button" class="btn btn-danger col-md-12 remove"><span class="fa fa-trash"></span></button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    `;
+                        $(".data-barang").append(html);
+                        if(role == 1){
+                            $('#id_gudang_'+i).select2({
                                 width: "100%",
-                                placeholder: "Pilih Warna",
+                                placeholder: "Pilih Gudang",
                             });
-        
-                            $('#id_warna_'+i).on('change', function () {
-                                var id_warna = $(this).val();
-                                var id_barang = $('#id_barang_'+i).val();
-                                console.log('asdflkasdjf')
-                                $.ajax({
-                                    method: "POST",
-                                    url: App.baseUrl+'barang_masuk/getDataUkuran',
-                                    data : {id_barang : id_barang, id_warna: id_warna}
-                                }).done(function( data ) {
-                                    var data = JSON.parse(data);
-                                    var data_ukuran = data.data.ukuran;
-                                    console.log('data_ukura', data_ukuran);
-
-                                    var html = `
-                                    <div class="form-group">
-                                        <label for="">Ukuran</label>
-                                        <select name="ukuran[]" id="ukuran_${i}" class="form-control select_ukuran">
-                                    `;
-                                    var option = "";
-                                    for (var index = 0; index < data_ukuran.length; index++) {
-                                            option += "<option value="+data_ukuran[index].ukuran+"> "+data_ukuran[index].ukuran+"</option>";
-                                    }
-                                    html += option;
-                                    html += `</select>
-                                        </div>
-                                    `;
-                                    
-                                    $('.ukuran_'+i).html(html);
-                                    $('#ukuran_'+i).select2({
-                                        width: "100%",
-                                        placeholder: "Pilih Ukuran",
-                                    });
-
-                                    var html = `
-                                    <div class="form-group">
-                                        <label for="">Ukuran</label>
-                                        <select name="ukuran2[]" id="ukuran2_${i}" class="form-control select_ukuran">
-                                    `;
-                                    var option = "";
-                                    for (var index = 0; index < data_ukuran.length; index++) {
-                                            option += "<option value="+data_ukuran[index].ukuran+"> "+data_ukuran[index].ukuran+"</option>";
-                                    }
-                                    html += option;
-                                    html += `</select>
-                                        </div>
-                                    `;
-                                    
-                                    $('.ukuran-2_'+i).html(html);
-                                    $('#ukuran2_'+i).select2({
-                                        width: "100%",
-                                        placeholder: "Pilih Ukuran",
-                                    });
-                                })
-                                
-                            })
-
-                            $('#id_warna_'+i).trigger('change');
+                        }
+                        $('#id_koli_'+i).select2({
+                            width: "100%",
+                            placeholder: "Pilih Koli",
                         });
-                    })
-                    $('#id_barang_'+i).trigger('change');
+                        $('#id_barang_'+i).on('change', function () {
+                            var id_barang = $(this).val();
+                            $.ajax({
+                                method: "POST",
+                                url: App.baseUrl+'barang_masuk/getDataWarna',
+                                data : {id_barang : id_barang}
+                            }).done(function( data ) {
+                            var data = JSON.parse(data);
+                                var data_warna = data.data.warna;
+                                var html = `
+                                    <div class="form-group">
+                                        <label for="">Warna</label>
+                                        <select name="id_warna[]" id="id_warna_${i}" class="form-control select_warna">
+                                `;
+                                var option = "";
+                                for (var index = 0; index < data_warna.length; index++) {
+                                        option += "<option value="+data_warna[index].id_warna+"> "+data_warna[index].warna_name+"</option>";
+                                }
+                                html += option;
+                                html += `</select>
+                                    </div>
+                                `;
+                                
+                                $('.warna_'+i).html(html);
+                                $('#id_warna_'+i).select2({
+                                    width: "100%",
+                                    placeholder: "Pilih Warna",
+                                });
+            
+                                $('#id_warna_'+i).on('change', function () {
+                                    var id_warna = $(this).val();
+                                    var id_barang = $('#id_barang_'+i).val();
+                                    console.log('asdflkasdjf')
+                                    $.ajax({
+                                        method: "POST",
+                                        url: App.baseUrl+'barang_masuk/getDataUkuran',
+                                        data : {id_barang : id_barang, id_warna: id_warna}
+                                    }).done(function( data ) {
+                                        var data = JSON.parse(data);
+                                        var data_ukuran = data.data.ukuran;
+                                        console.log('data_ukura', data_ukuran);
+    
+                                        var html = `
+                                        <div class="form-group">
+                                            <label for="">Ukuran</label>
+                                            <select name="ukuran[]" id="ukuran_${i}" class="form-control select_ukuran">
+                                        `;
+                                        var option = "";
+                                        for (var index = 0; index < data_ukuran.length; index++) {
+                                                option += "<option value="+data_ukuran[index].ukuran+"> "+data_ukuran[index].ukuran+"</option>";
+                                        }
+                                        html += option;
+                                        html += `</select>
+                                            </div>
+                                        `;
+                                        
+                                        $('.ukuran_'+i).html(html);
+                                        $('#ukuran_'+i).select2({
+                                            width: "100%",
+                                            placeholder: "Pilih Ukuran",
+                                        });
+    
+                                        var html = `
+                                        <div class="form-group">
+                                            <label for="">Ukuran</label>
+                                            <select name="ukuran2[]" id="ukuran2_${i}" class="form-control select_ukuran">
+                                        `;
+                                        var option = "";
+                                        for (var index = 0; index < data_ukuran.length; index++) {
+                                                option += "<option value="+data_ukuran[index].ukuran+"> "+data_ukuran[index].ukuran+"</option>";
+                                        }
+                                        html += option;
+                                        html += `</select>
+                                            </div>
+                                        `;
+                                        
+                                        $('.ukuran-2_'+i).html(html);
+                                        $('#ukuran2_'+i).select2({
+                                            width: "100%",
+                                            placeholder: "Pilih Ukuran",
+                                        });
+                                    })
+                                    
+                                })
+    
+                                $('#id_warna_'+i).trigger('change');
+                            });
+                        })
+                        $('#id_barang_'+i).trigger('change');
+                    }else{
+                        toastr.error('Kode Barang Tidak Ditemukan!');
+                    }
                 });
             });
       
