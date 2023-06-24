@@ -471,8 +471,8 @@ class Barang_keluar extends Admin_Controller
 			$barang = $this->stock_gudang_model->getAllById(array('id_barang' => $this->input->post('id'), 'ukuran' => $this->input->post('ukuran'), 'id_warna' => $this->input->post('id_warna'), 'id_gudang' => 2));
 		}
 		$total = $barang[0]->stock - $this->input->post('jumlah');
-		
-		if($total > 0){	
+
+		if($total >= 0){
             $response_data['status'] = true;
             $response_data['data'] = $barang;
             $response_data['message'] = 'Berhasil Mengambil Data';
