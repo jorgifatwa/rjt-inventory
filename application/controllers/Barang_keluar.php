@@ -38,9 +38,16 @@ class Barang_keluar extends Admin_Controller
 		if ($this->input->post()) {
 
 			$status_stock = false;
+
+			if($this->data['users_groups']->id == 2){
+				$data['id_gudang'] = 1;
+			}else if($this->data['users_groups']->id == 3){
+				$data['id_gudang'] = 2;
+			}
+
 			for ($i=0; $i < count($this->input->post('jumlah')); $i++) {
-				$barang = $this->stock_model->getStock(array('id_barang' => $_POST['id_barang'][$i], 'ukuran' => $_POST['ukuran'][$i], 'id_warna' => $_POST['id_warna'][$i]));
-				$total = $barang[0]->stock - $_POST['jumlah'][$i];
+				$barang = $this->stock_gudang_model->getOneBy(array('id_barang' => $_POST['id_barang'][$i], 'ukuran' => $_POST['ukuran'][$i], 'id_warna' => $_POST['id_warna'][$i], 'id_gudang' => $data['id_gudang']));
+				$total = $barang->stock - $_POST['jumlah'][$i];
 				if($total < 0){
 					$status_stock = false;
 				}else{
