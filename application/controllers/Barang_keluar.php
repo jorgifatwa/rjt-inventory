@@ -46,7 +46,7 @@ class Barang_keluar extends Admin_Controller
 			}
 
 			$transaksi = $this->transaksi_model->getOneBy(array('no_resi' => $_POST['no_resi']));
-			if(!empty($transaksi)){
+			if(isset($transaksi)){
 				for ($i=0; $i < count($this->input->post('jumlah')); $i++) {
 					$barang = $this->stock_gudang_model->getOneBy(array('id_barang' => $_POST['id_barang'][$i], 'ukuran' => $_POST['ukuran'][$i], 'id_warna' => $_POST['id_warna'][$i], 'id_gudang' => $data['id_gudang']));
 					$total = $barang->stock - $_POST['jumlah'][$i];
