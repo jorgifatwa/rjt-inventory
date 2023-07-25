@@ -208,13 +208,16 @@ class Barang_masuk extends Admin_Controller
 			$search = array(
 				"barang.nama" => $search_value,
 				"gudang.nama" => $search_value,
-				"koli.nama" => $search_value,
 				"warna.nama" => $search_value,
 				"barang_masuk.ukuran" => $search_value,
 				"barang_masuk.jumlah_koli" => $search_value,
 				"barang_masuk.jumlah_barang" => $search_value,
 				"barang_masuk.tanggal" => $search_value,
 			);
+
+			if($this->data['users_groups']->id == 1){
+				$search["koli.nama"] = $search_value;
+			}
 			$totalFiltered = $this->barang_masuk_model->getCountAllBy($limit, $start, $search, $order, $dir, $where);
 		} else {
 			$totalFiltered = $totalData;
