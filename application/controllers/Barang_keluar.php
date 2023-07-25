@@ -45,128 +45,135 @@ class Barang_keluar extends Admin_Controller
 				$data['id_gudang'] = 2;
 			}
 
-			for ($i=0; $i < count($this->input->post('jumlah')); $i++) {
-				$barang = $this->stock_gudang_model->getOneBy(array('id_barang' => $_POST['id_barang'][$i], 'ukuran' => $_POST['ukuran'][$i], 'id_warna' => $_POST['id_warna'][$i], 'id_gudang' => $data['id_gudang']));
-				$total = $barang->stock - $_POST['jumlah'][$i];
-				if($total < 0){
-					$status_stock = false;
-				}else{
-					$status_stock = true;
-				}	
-			}
-
-			if($status_stock == true){
-				if($this->data['users_groups']->id == 3){
-					$data_transaksi = array(
-						'no_resi' => $_POST['no_resi'],
-						'created_at' => date('Y-m-d H:i:s'),
-						'created_by' => $this->data['users']->id
-					);
-
-					$insert_transaksi = $this->transaksi_model->insert($data_transaksi);
+			$transaksi = $this->transaksi_model->getOneBy(array('no_resi' => $_POST['no_resi']));
+			if(!empty($transaksi)){
+				for ($i=0; $i < count($this->input->post('jumlah')); $i++) {
+					$barang = $this->stock_gudang_model->getOneBy(array('id_barang' => $_POST['id_barang'][$i], 'ukuran' => $_POST['ukuran'][$i], 'id_warna' => $_POST['id_warna'][$i], 'id_gudang' => $data['id_gudang']));
+					$total = $barang->stock - $_POST['jumlah'][$i];
+					if($total < 0){
+						$status_stock = false;
+					}else{
+						$status_stock = true;
+					}	
 				}
 	
-				for ($i=0; $i < count($this->input->post('jumlah')); $i++) {
-
-						if($this->data['users_groups']->id != 3){
-							$insert_transaksi = 0;
-						}
-
-						$data = array(
-							'id_transaksi' => $insert_transaksi,
-							'id_barang' => $_POST['id_barang'][$i],
-							'jumlah' => $_POST['jumlah'][$i],
-							'tanggal' => $_POST['tanggal'],
-							'ukuran' => $_POST['ukuran'][$i],
-							'id_warna' => $_POST['id_warna'][$i],
+				if($status_stock == true){
+					if($this->data['users_groups']->id == 3){
+						$data_transaksi = array(
+							'no_resi' => $_POST['no_resi'],
 							'created_at' => date('Y-m-d H:i:s'),
 							'created_by' => $this->data['users']->id
 						);
-						if($this->data['users_groups']->id == 2){
-							$data['id_gudang'] = $_POST['id_gudang'];
-						}else if($this->data['users_groups']->id == 3){
-							$data['id_marketplace'] = $_POST['id_marketplace'];
-						}
-
-						$insert_barang_keluar = $this->barang_keluar_model->insert($data);
-
-						if($this->data['users_groups']->id == 2){
+	
+						$insert_transaksi = $this->transaksi_model->insert($data_transaksi);
+					}
+		
+					for ($i=0; $i < count($this->input->post('jumlah')); $i++) {
+	
+							if($this->data['users_groups']->id != 3){
+								$insert_transaksi = 0;
+							}
+	
 							$data = array(
+								'id_transaksi' => $insert_transaksi,
 								'id_barang' => $_POST['id_barang'][$i],
-								'id_warna' => $_POST['id_warna'][$i],
-								'ukuran' => $_POST['ukuran'][$i],
-								'id_gudang' => $_POST['id_gudang'],
-								'jumlah_barang' => $_POST['jumlah'][$i],
+								'jumlah' => $_POST['jumlah'][$i],
 								'tanggal' => $_POST['tanggal'],
+								'ukuran' => $_POST['ukuran'][$i],
+								'id_warna' => $_POST['id_warna'][$i],
 								'created_at' => date('Y-m-d H:i:s'),
 								'created_by' => $this->data['users']->id
 							);
+							if($this->data['users_groups']->id == 2){
+								$data['id_gudang'] = $_POST['id_gudang'];
+							}else if($this->data['users_groups']->id == 3){
+								$data['id_marketplace'] = $_POST['id_marketplace'];
+							}
 	
-							$insert_barang_masuk = $this->barang_masuk_model->insert($data);
-
-							//UPDATE STOCK DI GUDANG
-							$stock = $this->stock_gudang_model->getOneBy(array('id_barang' => $_POST['id_barang'][$i], 'id_warna' => $_POST['id_warna'][$i], 'ukuran' => $_POST['ukuran'][$i], 'id_gudang' => 1));
-						
-							$total = $stock->stock - $_POST['jumlah'][$i];
-			
-							$data_update = array(
-								'stock' => $total
-							);
-
-							$this->stock_gudang_model->update($data_update, array("id" => $stock->id));
-							//INSERT ATAU UPDATE DATA DI STOCK GUDANG YANG DI PINDAHKAN
-							$stock = $this->stock_gudang_model->getOneBy(array('id_barang' => $_POST['id_barang'][$i], 'id_warna' => $_POST['id_warna'][$i], 'ukuran' => $_POST['ukuran'][$i], 'id_gudang' => $_POST['id_gudang']));
-							if($stock){
-								$total = $stock->stock + $_POST['jumlah'][$i];
-			
-								$data_update = array(
-									'stock' => $total
-								);
-
-								$this->stock_gudang_model->update($data_update, array("id" => $stock->id));
-							}else{
+							$insert_barang_keluar = $this->barang_keluar_model->insert($data);
+	
+							if($this->data['users_groups']->id == 2){
 								$data = array(
 									'id_barang' => $_POST['id_barang'][$i],
-									'id_gudang' => $_POST['id_gudang'],
-									'stock' => $_POST['jumlah'][$i],
-									'ukuran' => $_POST['ukuran'][$i],
 									'id_warna' => $_POST['id_warna'][$i],
+									'ukuran' => $_POST['ukuran'][$i],
+									'id_gudang' => $_POST['id_gudang'],
+									'jumlah_barang' => $_POST['jumlah'][$i],
+									'tanggal' => $_POST['tanggal'],
 									'created_at' => date('Y-m-d H:i:s'),
 									'created_by' => $this->data['users']->id
 								);
-								$insert_stock_gudang = $this->stock_gudang_model->insert($data);
+		
+								$insert_barang_masuk = $this->barang_masuk_model->insert($data);
+	
+								//UPDATE STOCK DI GUDANG
+								$stock = $this->stock_gudang_model->getOneBy(array('id_barang' => $_POST['id_barang'][$i], 'id_warna' => $_POST['id_warna'][$i], 'ukuran' => $_POST['ukuran'][$i], 'id_gudang' => 1));
+							
+								$total = $stock->stock - $_POST['jumlah'][$i];
+				
+								$data_update = array(
+									'stock' => $total
+								);
+	
+								$this->stock_gudang_model->update($data_update, array("id" => $stock->id));
+								//INSERT ATAU UPDATE DATA DI STOCK GUDANG YANG DI PINDAHKAN
+								$stock = $this->stock_gudang_model->getOneBy(array('id_barang' => $_POST['id_barang'][$i], 'id_warna' => $_POST['id_warna'][$i], 'ukuran' => $_POST['ukuran'][$i], 'id_gudang' => $_POST['id_gudang']));
+								if($stock){
+									$total = $stock->stock + $_POST['jumlah'][$i];
+				
+									$data_update = array(
+										'stock' => $total
+									);
+	
+									$this->stock_gudang_model->update($data_update, array("id" => $stock->id));
+								}else{
+									$data = array(
+										'id_barang' => $_POST['id_barang'][$i],
+										'id_gudang' => $_POST['id_gudang'],
+										'stock' => $_POST['jumlah'][$i],
+										'ukuran' => $_POST['ukuran'][$i],
+										'id_warna' => $_POST['id_warna'][$i],
+										'created_at' => date('Y-m-d H:i:s'),
+										'created_by' => $this->data['users']->id
+									);
+									$insert_stock_gudang = $this->stock_gudang_model->insert($data);
+								}
+							}else{
+								//UPDATE STOCK DI GUDANG
+								$stock = $this->stock_gudang_model->getOneBy(array('id_barang' => $_POST['id_barang'][$i], 'id_warna' => $_POST['id_warna'][$i], 'ukuran' => $_POST['ukuran'][$i], 'id_gudang' => 2));
+							
+								$total = $stock->stock - $_POST['jumlah'][$i];
+				
+								$data_update = array(
+									'stock' => $total
+								);
+	
+								$this->stock_gudang_model->update($data_update, array("id" => $stock->id));
 							}
-						}else{
-							//UPDATE STOCK DI GUDANG
-							$stock = $this->stock_gudang_model->getOneBy(array('id_barang' => $_POST['id_barang'][$i], 'id_warna' => $_POST['id_warna'][$i], 'ukuran' => $_POST['ukuran'][$i], 'id_gudang' => 2));
-						
-							$total = $stock->stock - $_POST['jumlah'][$i];
-			
+	
+							//UPDATE STOK KESELURUHAN
+							$barang = $this->stock_model->getStock(array('id_barang' => $_POST['id_barang'][$i], 'ukuran' => $_POST['ukuran'][$i], 'id_warna' => $_POST['id_warna'][$i]));
+	
+							$total = $barang[0]->stock - $_POST['jumlah'][$i];
+	
 							$data_update = array(
 								'stock' => $total
 							);
-
-							$this->stock_gudang_model->update($data_update, array("id" => $stock->id));
-						}
-
-						//UPDATE STOK KESELURUHAN
-						$barang = $this->stock_model->getStock(array('id_barang' => $_POST['id_barang'][$i], 'ukuran' => $_POST['ukuran'][$i], 'id_warna' => $_POST['id_warna'][$i]));
-
-						$total = $barang[0]->stock - $_POST['jumlah'][$i];
-
-						$data_update = array(
-							'stock' => $total
-						);
-		
-						$this->stock_model->update($data_update, array('id_barang' => $_POST['id_barang'][$i], 'ukuran' => $_POST['ukuran'][$i], 'id_warna' => $_POST['id_warna'][$i]));
+			
+							$this->stock_model->update($data_update, array('id_barang' => $_POST['id_barang'][$i], 'ukuran' => $_POST['ukuran'][$i], 'id_warna' => $_POST['id_warna'][$i]));
+					}
+					
+					$this->session->set_flashdata('message', "Barang Keluar Baru Berhasil Disimpan");
+					redirect("barang_keluar");
+				}else {
+					$this->session->set_flashdata('message_error', "Barang Keluar Baru Gagal Disimpan");
+					redirect("barang_keluar");
 				}
-				
-				$this->session->set_flashdata('message', "Barang Keluar Baru Berhasil Disimpan");
-				redirect("barang_keluar");
-			}else {
-				$this->session->set_flashdata('message_error', "Barang Keluar Baru Gagal Disimpan");
+			}else{
+				$this->session->set_flashdata('message_error', "No. Resi Sudah di Input!");
 				redirect("barang_keluar");
 			}
+
 		} else {
 			$this->data['content'] = 'admin/barang_keluar/create_v';
 			$this->data['barangs'] = $this->barang_model->getAllById();
