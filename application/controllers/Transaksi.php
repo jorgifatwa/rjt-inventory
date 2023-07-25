@@ -23,33 +23,6 @@ class Transaksi extends Admin_Controller
 		$this->load->view('admin/layouts/page', $this->data);
 	}
 
-	public function create() 
-	{
-		$this->form_validation->set_rules('name', "Nama Harus Diisi", 'trim|required');
-		
-		if ($this->form_validation->run() === TRUE) {
-			
-
-			$data = array(
-				'nama' => $this->input->post('name'),
-				'description' => $this->input->post('description'),
-				'created_at' => date('Y-m-d H:i:s'),
-				'created_by' => $this->data['users']->id
-			);
-
-			if ($this->transaksi_model->insert($data)) {
-				$this->session->set_flashdata('message', "transaksi Baru Berhasil Disimpan");
-				redirect("transaksi");
-			} else {
-				$this->session->set_flashdata('message_error', "transaksi Baru Gagal Disimpan");
-				redirect("transaksi");
-			}
-		} else {
-			$this->data['content'] = 'admin/transaksi/create_v';
-			$this->load->view('admin/layouts/page', $this->data);
-		}
-	}
-
 	public function detail() 
 	{
 		if (!empty($_POST)) {
@@ -79,7 +52,7 @@ class Transaksi extends Admin_Controller
 	{
 		$columns = array(
 			0 => 'no_resi',
-			1 => 'tanggal',
+			1 => 'created_at',
 		);
 
 		$order = $columns[$this->input->post('order')[0]['column']];
@@ -92,8 +65,8 @@ class Transaksi extends Admin_Controller
 		if (!empty($this->input->post('search')['value'])) {
 			$search_value = $this->input->post('search')['value'];
 			$search = array(
-				"transaksi.nama" => $search_value,
-				"transaksi.description" => $search_value,
+				"transaksi.no_resi" => $search_value,
+				"transaksi.created_at" => $search_value,
 			);
 			$totalFiltered = $this->transaksi_model->getCountAllBy($limit, $start, $search, $order, $dir);
 		} else {
