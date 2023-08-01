@@ -268,7 +268,7 @@ class Barang_keluar_model extends CI_Model
         $this->db->where("barang_keluar.is_deleted",0);  
         $this->db->where("id_gudang",null);  
         $this->db->where('MONTH(tanggal)', $month);
-        $this->db->order_by("barang_keluar.total", 'ASC');  
+        $this->db->order_by("total", 'ASC');  
         $this->db->group_by("barang_keluar.id_barang");  
         $this->db->limit($limit,$start)->order_by('total');
         if(!empty($search)){
@@ -298,7 +298,7 @@ class Barang_keluar_model extends CI_Model
         $this->db->where("barang_keluar.is_deleted",0);  
         $this->db->where("id_gudang",null);  
         $this->db->where('MONTH(tanggal)', $month);
-        $this->db->order_by("barang_keluar.total", 'ASC');  
+        $this->db->order_by("total", 'ASC');  
         $this->db->group_by("barang_keluar.id_barang");  
         if(!empty($search)){
             $this->db->group_start();
