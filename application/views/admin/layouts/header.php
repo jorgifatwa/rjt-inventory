@@ -21,8 +21,8 @@
   <link rel="stylesheet" href="<?php echo base_url() ?>assets/css/style.css">
   <link rel="stylesheet" href="<?php echo base_url() ?>assets/plugins/bs-dropzone/dist/css/bs-dropzone.min.css">
   <link rel="stylesheet" href="<?php echo base_url() ?>assets/plugins/datatables/select.dataTables.min.css">
-  <script type="text/javascript" src="<?php echo base_url() ?>assets/plugins/datatables/dataTables.select.min.js"></script>
   <script type="text/javascript" src="<?php echo base_url() ?>assets/plugins/jquery/jquery.min.js"></script>
+  <script type="text/javascript" src="<?php echo base_url() ?>assets/plugins/datatables/dataTables.select.min.js"></script>
   <script type="text/javascript" src="<?php echo base_url() ?>assets/plugins/adminlte/adminlte.min.js"></script>
 <!--   <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback"> -->
 </head>
