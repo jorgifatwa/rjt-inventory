@@ -273,7 +273,9 @@ class Dashboard extends Admin_Controller {
 							}
 						}
 					}
-					$data_bulan[$i] = $bulan[$i];
+					if($i <=12){
+						$data_bulan[$i] = $bulan[$i];
+					}
 				}
 				$i++;
 			}
@@ -293,7 +295,9 @@ class Dashboard extends Admin_Controller {
 							}
 						}
 					}
-					$data_bulan[$i] = $bulan[$i];
+					if($i <=12){
+						$data_bulan[$i] = $bulan[$i];
+					}
 				}
 				$i++;
 			}
