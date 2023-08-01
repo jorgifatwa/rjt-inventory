@@ -313,7 +313,9 @@ class Dashboard extends Admin_Controller {
 					if($bulan[$month[$i]] == $data_bulan[$index]){
 						foreach ($price_marketplace as $key => $price) {
 							if($data->id_barang == $price->id_barang && $data->id_marketplace == $price->id_marketplace){
-								$data_pendapatan_lazada[$index] = $data_pendapatan_lazada[$index] + ($data->jumlah * $price->harga);
+								if (is_numeric($data->jumlah) && is_numeric($price->harga)) {
+									$data_pendapatan_lazada[$index] = $data_pendapatan_lazada[$index] + ($data->jumlah * $price->harga);
+								}
 							}
 						}
 					}
