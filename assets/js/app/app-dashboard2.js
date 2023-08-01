@@ -251,7 +251,7 @@ define([
                 yAxis: {
                     min: 0,
                     title: {
-                        text: 'Jumlah Barang Terjual'
+                        text: 'Jumlah Pendapatan Kotor'
                     }
                 },
                 plotOptions: {
