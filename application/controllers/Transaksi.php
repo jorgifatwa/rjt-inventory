@@ -142,7 +142,7 @@ class Transaksi extends Admin_Controller
 		
 		if ($this->form_validation->run() === TRUE) {
 			$barang_keluar = $this->barang_keluar_model->getAllById(array("barang_keluar.id_transaksi" => $this->input->post('id_transaksi'), 'barang_keluar.id_barang' => $this->input->post('id_barang'), 'barang_keluar.id_warna' => $this->input->post('id_warna'), 'barang_keluar.ukuran' => $this->input->post('ukuran')));
-			if($barang_keluar[0]->jumlah > $this->input->post('jumlah')){
+			if($barang_keluar[0]->jumlah >= $this->input->post('jumlah')){
 				$data = array(
 					'id_transaksi' => $this->input->post('id_transaksi'),
 					'id_barang_keluar' => $barang_keluar[0]->barang_keluar_id,
