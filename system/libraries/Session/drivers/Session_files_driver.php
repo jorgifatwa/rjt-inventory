@@ -130,27 +130,27 @@ class CI_Session_files_driver extends CI_Session_driver implements SessionHandle
 	 * @return	bool
 	 */
 	public function open($save_path, $name)
-	{
-		try {
-			if (!is_dir($save_path)) {
-				if (!mkdir($save_path, 0700, true)) {
-					throw new Exception("Session: Configured save path '{$this->_config['save_path']}' is not a directory, doesn't exist or cannot be created.");
-				}
-			} elseif (!is_writable($save_path)) {
-				throw new Exception("Session: Configured save path '{$this->_config['save_path']}' is not writable by the PHP process.");
-			}
+{
+    try {
+        if (!is_dir($save_path) && !mkdir($save_path, 0700, true)) {
+            throw new Exception("Session: Configured save path '{$this->_config['save_path']}' is not a directory, doesn't exist, or cannot be created.");
+        }
 
-			$this->_config['save_path'] = $save_path;
-			$this->_file_path = $this->_config['save_path'] . DIRECTORY_SEPARATOR
-				. $name // we'll use the session cookie name as a prefix to avoid collisions
-				. ($this->_config['match_ip'] ? md5($_SERVER['REMOTE_ADDR']) : '');
+        if (!is_writable($save_path)) {
+            throw new Exception("Session: Configured save path '{$this->_config['save_path']}' is not writable by the PHP process.");
+        }
 
-			return true; // Session successfully opened
-		} catch (Exception $e) {
-			// Handle the exception (e.g., log it or rethrow it)
-			throw $e;
-		}
-	}
+        $this->_config['save_path'] = $save_path;
+        $this->_file_path = $this->_config['save_path'] . DIRECTORY_SEPARATOR
+            . $name
+            . ($this->_config['match_ip'] ? md5($_SERVER['REMOTE_ADDR']) : '');
+
+        return true; // Session successfully opened
+    } catch (Exception $e) {
+        // Handle the exception (e.g., log it or rethrow it)
+        throw $e;
+    }
+}
 
 	// ------------------------------------------------------------------------
 
